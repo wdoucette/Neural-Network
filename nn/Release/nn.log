@@ -1,0 +1,37 @@
+﻿Build started 2/17/2011 9:14:53 PM.
+     1>Project "C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\nn\nn.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Release\nn.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         All outputs are up-to-date.
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Release\nn.pch" /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt nn.cpp
+         nn.cpp
+     1>nn.cpp(104): warning C4244: 'argument' : conversion from 'short' to 'char', possible loss of data
+     1>nn.cpp(372): warning C4244: '=' : conversion from 'float' to 'int', possible loss of data
+     1>nn.cpp(384): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>nn.cpp(384): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>nn.cpp(417): warning C4258: 'i' : definition from the for loop is ignored; the definition from the enclosing scope is used
+                 nn.cpp(409) : definition of 'i' ignored
+                 nn.cpp(403) : definition of 'i' used
+     1>nn.cpp(398): warning C4101: 'pool' : unreferenced local variable
+     1>nn.cpp(733): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+       Link:
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\Release\nn.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\nn.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\Release\nn.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\Release\nn.lib" /MACHINE:X86 Release\GeneticAlgorithm.obj
+         Release\Layer.obj
+         Release\Neuron.obj
+         Release\nn.obj
+         Release\stdafx.obj
+         Release\TemplateTest.obj
+         Generating code
+         Finished generating code
+         nn.vcxproj -> C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\Release\nn.exe
+       Manifest:
+         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\Release\nn.exe;#1" /manifest Release\nn.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "Release\nn.unsuccessfulbuild".
+         Touching "Release\nn.lastbuildstate".
+     1>Done Building Project "C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\nn\nn.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:06.98

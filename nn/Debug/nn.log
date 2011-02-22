@@ -1,0 +1,39 @@
+﻿Build started 2/21/2011 10:19:16 PM.
+     1>Project "C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\nn\nn.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Debug\nn.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         All outputs are up-to-date.
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\nn.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt nn.cpp
+         nn.cpp
+     1>c:\documents and settings\rater\my documents\visual studio 2010\projects\nn\nn\nn.cpp(103): warning C4244: '=' : conversion from 'short' to 'char', possible loss of data
+     1>c:\documents and settings\rater\my documents\visual studio 2010\projects\nn\nn\nn.cpp(104): warning C4244: 'argument' : conversion from 'short' to 'char', possible loss of data
+     1>c:\documents and settings\rater\my documents\visual studio 2010\projects\nn\nn\nn.cpp(436): warning C4258: 'i' : definition from the for loop is ignored; the definition from the enclosing scope is used
+                 c:\documents and settings\rater\my documents\visual studio 2010\projects\nn\nn\nn.cpp(428) : definition of 'i' ignored
+                 c:\documents and settings\rater\my documents\visual studio 2010\projects\nn\nn\nn.cpp(422) : definition of 'i' used
+     1>c:\documents and settings\rater\my documents\visual studio 2010\projects\nn\nn\nn.cpp(417): warning C4101: 'pool' : unreferenced local variable
+     1>c:\documents and settings\rater\my documents\visual studio 2010\projects\nn\nn\nn.cpp(752): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+       ManifestResourceCompile:
+         All outputs are up-to-date.
+       Link:
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\Debug\nn.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\nn.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\Debug\nn.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\Debug\nn.lib" /MACHINE:X86 Debug\nn.exe.embed.manifest.res
+         Debug\GeneticAlgorithm.obj
+         Debug\Layer.obj
+         Debug\Neuron.obj
+         Debug\nn.obj
+         Debug\stdafx.obj
+         Debug\TemplateTest.obj
+       Manifest:
+         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\nn.exe.embed.manifest" /manifest Debug\nn.exe.intermediate.manifest
+         All outputs are up-to-date.
+       LinkEmbedManifest:
+         All outputs are up-to-date.
+         nn.vcxproj -> C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\Debug\nn.exe
+       FinalizeBuildStatus:
+         Deleting file "Debug\nn.unsuccessfulbuild".
+         Touching "Debug\nn.lastbuildstate".
+     1>Done Building Project "C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\nn\nn\nn.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:10.56

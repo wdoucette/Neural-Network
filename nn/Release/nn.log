@@ -1,0 +1,50 @@
+﻿Build started 2/22/2011 12:55:16 PM.
+     1>Project "C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\Neural-Network\nn\nn.vcxproj" on node 2 (build target(s)).
+     1>PrepareForBuild:
+         Creating directory "C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\Neural-Network\Release\".
+       InitializeBuildStatus:
+         Creating "Release\nn.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yc"StdAfx.h" /Fp"Release\nn.pch" /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _CONSOLE /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Release\nn.pch" /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt GeneticAlgorithm.cpp Layer.cpp Neuron.cpp nn.cpp TemplateTest.cpp
+         GeneticAlgorithm.cpp
+     1>GeneticAlgorithm.cpp(17): warning C4305: '=' : truncation from 'double' to 'float'
+     1>GeneticAlgorithm.cpp(96): warning C4244: 'argument' : conversion from 'double' to 'int', possible loss of data
+     1>GeneticAlgorithm.cpp(145): warning C4305: '=' : truncation from 'double' to 'float'
+     1>GeneticAlgorithm.cpp(210): warning C4244: 'initializing' : conversion from 'double' to 'short', possible loss of data
+     1>GeneticAlgorithm.cpp(211): warning C4244: 'initializing' : conversion from 'double' to 'short', possible loss of data
+         Layer.cpp
+     1>Layer.cpp(43): warning C4244: 'return' : conversion from 'unsigned short' to 'char', possible loss of data
+         Neuron.cpp
+     1>Neuron.cpp(10): warning C4305: 'initializing' : truncation from 'double' to 'const float'
+     1>Neuron.cpp(60): warning C4244: '=' : conversion from 'double' to 'float', possible loss of data
+         nn.cpp
+     1>nn.cpp(103): warning C4244: '=' : conversion from 'short' to 'char', possible loss of data
+     1>nn.cpp(104): warning C4244: 'argument' : conversion from 'short' to 'char', possible loss of data
+     1>nn.cpp(436): warning C4258: 'i' : definition from the for loop is ignored; the definition from the enclosing scope is used
+                 nn.cpp(428) : definition of 'i' ignored
+                 nn.cpp(422) : definition of 'i' used
+     1>nn.cpp(417): warning C4101: 'pool' : unreferenced local variable
+     1>nn.cpp(752): warning C4244: 'argument' : conversion from 'time_t' to 'unsigned int', possible loss of data
+         TemplateTest.cpp
+       Link:
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\Neural-Network\Release\nn.exe" /INCREMENTAL:NO /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\nn.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\Neural-Network\Release\nn.pdb" /SUBSYSTEM:CONSOLE /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\Neural-Network\Release\nn.lib" /MACHINE:X86 Release\GeneticAlgorithm.obj
+         Release\Layer.obj
+         Release\Neuron.obj
+         Release\nn.obj
+         Release\stdafx.obj
+         Release\TemplateTest.obj
+         Generating code
+         Finished generating code
+         nn.vcxproj -> C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\Neural-Network\Release\nn.exe
+       Manifest:
+         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\Neural-Network\Release\nn.exe;#1" /manifest Release\nn.exe.intermediate.manifest
+       FinalizeBuildStatus:
+         Deleting file "Release\nn.unsuccessfulbuild".
+         Touching "Release\nn.lastbuildstate".
+     1>Done Building Project "C:\Documents and Settings\Rater\My Documents\Visual Studio 2010\Projects\Neural-Network\nn\nn.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:14.32

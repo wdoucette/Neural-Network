@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+//#include "StdAfx.h"
 #include "Neuron.h"
 #include "iostream"
 #include "math.h"

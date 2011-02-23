@@ -1,4 +1,6 @@
-#include "StdAfx.h"
+//#include "StdAfx.h"
+#include <stdlib.h>
+
 #include "GeneticAlgorithm.h"
 
 

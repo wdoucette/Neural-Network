@@ -1,19 +1,18 @@
-#include "stdafx.h"
-//#include <stdlib.h>
+//#include "stdafx.h"
+#include <stdlib.h>
+#include <time.h>
 //#include <crtdbg.h>
 //#define _CRTDBG_MAP_ALLOC
-
-
 #include <iostream>
 //#include "conio.h"
 #include <sstream> //cout << stringstream(mystr);
 //#include <vector>
 #include <string>
-#include "math.h"
-#include <regex>
+#include <cmath>
+//#include <regex>
 #include "GeneticAlgorithm.h"
 #include "Layer.h"	
-#include "TemplateTest.h"
+//#include "TemplateTest.h"
 
 
 
@@ -24,7 +23,7 @@ const string INVALID_USAGE = "\n\nInvalid argument(s).\n\n\nUsage:\n\nnn.exe #In
 string * mystrptr;
 
 int myFunction (void);
-bool getRegEx(string, const string&);
+//bool getRegEx(string, const string&);
 
 short mutate(short);
 //float sigmoidConditioned(float, float);
@@ -33,8 +32,16 @@ short *tmp;
 //void process(void);
 	
 
+
+
+
+
 class NeuralNetwork{
 
+
+//char GeneticAlgorithm::wordLength;
+
+//void GeneticAlgorithm::dumpPool(short,short);
 	char thisObjectNumber;
 		float * myInputs;
 		float * myOutputs;
@@ -74,6 +81,8 @@ public:
 
 
 
+
+	
 	// Class methods.
 	static void externTest(int, int);
 
@@ -233,7 +242,7 @@ public:
 
 };
 
-	void NeuralNetwork::testCaseResults(TestCase * testCases, short count){
+	void testCaseResults(TestCase * testCases, short count){
 	
 		cout <<" Results:" <<endl;
 			for(int i=0; i < count ; i++){
@@ -243,7 +252,7 @@ public:
 			}
 	}
 
-void NeuralNetwork::testLoop(NeuralNetwork::TestCase * testCases, int nTestCases, float& networkFitness){
+void testLoop(NeuralNetwork::TestCase * testCases, int nTestCases, float& networkFitness){
 	
 		// Compare target vs actual outputs given an input set. 
 		GA->epoch();
@@ -260,7 +269,7 @@ void NeuralNetwork::testLoop(NeuralNetwork::TestCase * testCases, int nTestCases
 	//	return 1;		
 	}
 
-	void NeuralNetwork::getOutputs(float* ptrOutputs){
+	void getOutputs(float* ptrOutputs){
 		
 		// Get outputs of final layer.
 		NetworkLayers[Layer::layerCount-1].getOutputs(ptrOutputs);
@@ -273,7 +282,7 @@ void NeuralNetwork::testLoop(NeuralNetwork::TestCase * testCases, int nTestCases
 	
 	}
 
-	void NeuralNetwork::dumpOutputs(){
+	void dumpOutputs(){
 		
 		float * ptrOutputs = new float[nOutputs];
 		// Get outputs of final layer.
@@ -293,7 +302,7 @@ void NeuralNetwork::testLoop(NeuralNetwork::TestCase * testCases, int nTestCases
 	}
 
 
-int NeuralNetwork::evaluateNet(TestCase * testCases, char tcCount){
+int evaluateNet(TestCase * testCases, char tcCount){
 	
 	// Test and rank fitness of chromosones.
 	for(int i=0; i<seedSize*seedSize; i++){
@@ -349,7 +358,7 @@ int NeuralNetwork::evaluateNet(TestCase * testCases, char tcCount){
 	return 0;
 }
 
-void NeuralNetwork::orderByFitness(float& networkFitness){
+void orderByFitness(float& networkFitness){
 
 	// Purcolates seedSize chromosones with LOWEST fitness score to top in seedSize passes.
 	int iRef;
@@ -412,7 +421,7 @@ void NeuralNetwork::orderByFitness(float& networkFitness){
 
 }
 
-	void NeuralNetwork::testCycle(int cycles){
+	void testCycle(int cycles){
 	
 		short * pool;
 		float * pIn; 
@@ -449,7 +458,7 @@ void NeuralNetwork::orderByFitness(float& networkFitness){
 	}
 
 	
-	Layer * NeuralNetwork::init(){
+	Layer * init(){
 		
 		unsigned short nNeurons;
 		int i=0;
@@ -492,7 +501,7 @@ void NeuralNetwork::orderByFitness(float& networkFitness){
 
 
 
-	int NeuralNetwork::computeNetwork(float * pInputs, short * pool, Layer * pLayers){
+	int computeNetwork(float * pInputs, short * pool, Layer * pLayers){
 		
 		unsigned short nNeurons;
 		
@@ -653,36 +662,36 @@ void NeuralNetwork::orderByFitness(float& networkFitness){
 
 char	NeuralNetwork::objectCounter ;
 
-
+bool getRegEx(string, const string);
 
 
 	bool getIntVal(string strConvert, short *result) { 
 
 		// String must contain at least 1 digit.
-		string regEx = "(\\d{1})";
+//		string regEx = "(\\d{1})";
 
-		if(getRegEx(regEx, strConvert))	{
+//		if(getRegEx(regEx, strConvert))	{
 
 			// If the string is not a valid integer, zero will be returned. 
 			*result = atoi(strConvert.c_str()); 
 			return true;
 
-		}
-		else return false;
+//		}
+//		else return false;
 	}
 
 
-	bool getRegEx(string regEx , const std::string& s) {
+//	bool getRegEx(string regEx , const std::string& s) {
 
-		static const regex e(regEx);
+//		static const regex e(regEx);
 
 		//	bool rv = regex_match(str.begin(), str.end(), rx);
 
-		return regex_match(s, e);
+//		return regex_match(s, e);
 
-	}
+//	}
 
-		int _tmain(int argc, _TCHAR* argv[])
+		int main(int argc, char* argv[])
 	{
 		
 		// Static 
@@ -698,7 +707,7 @@ char	NeuralNetwork::objectCounter ;
 
 		string sArgs[nArgs];
 
-		TemplateTest T;
+//		TemplateTest T;
 
 		// TODO implement switches.
 		// Parse arguments.

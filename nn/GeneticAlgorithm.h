@@ -3,7 +3,6 @@
 #include <math.h>
 #include <iostream>
 #include <time.h>
-
 struct Chromosone {
 
 	
@@ -42,16 +41,16 @@ public:
 	Chromosone * chromosones;
 	char chromosoneLength;
 	short getRandomClamped(void);
-	static char GeneticAlgorithm::wordLength;
-	static short GeneticAlgorithm::getRandom(int,int);
-	static short GeneticAlgorithm::mutate(short&);
+	static char wordLength;
+	static short getRandom(int,int);
+	static short mutate(short&);
 	
 	short ** genePool;
 
-	bool GeneticAlgorithm::dumpPool(short, short=NULL);
-	void GeneticAlgorithm::initPool();
-	void GeneticAlgorithm::testInit(int);
-	int GeneticAlgorithm::epoch();
+	bool dumpPool(short, short=NULL);
+	void initPool();
+	void testInit(int);
+	int epoch();
 	
 	GeneticAlgorithm(char,char);
 	~GeneticAlgorithm(void);

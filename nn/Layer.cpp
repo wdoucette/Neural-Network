@@ -1,4 +1,3 @@
-//#include "StdAfx.h"	
 #include "iostream"
 #include "Layer.h"
 

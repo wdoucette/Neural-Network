@@ -1,5 +1,4 @@
-//#include "stdafx.h"
-#include <stdlib.h>
+#include "stdlib.h"
 #include <time.h>
 //#include <crtdbg.h>
 //#define _CRTDBG_MAP_ALLOC

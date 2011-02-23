@@ -1,7 +1,4 @@
-//#include "StdAfx.h"
 #include "Neuron.h"
-#include "iostream"
-#include "math.h"
 #include "GeneticAlgorithm.h"
 
 using namespace std;

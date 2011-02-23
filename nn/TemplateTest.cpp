@@ -1,4 +1,3 @@
-#include "StdAfx.h"
 #include "TemplateTest.h"
 #include "iostream"
 

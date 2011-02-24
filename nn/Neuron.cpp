@@ -54,7 +54,7 @@ float  Neuron::getOutput(){
 float Neuron::scaleWeight(float value)
 
 { 
-	value = (value - pow(2.0,GeneticAlgorithm::wordLength)/2) /100 ;
+	value = (value - pow(2.0,GeneticAlgorithm::wordLength) * .5) *.01  ;
 	return value;
 
 }
@@ -70,7 +70,16 @@ float Neuron::sigmoidConditioned(float value) {
 
 float Neuron::sigmoid(float activation){
 	
-	activation = 1 / (1 + pow(e, -activation / CONST_RESPONSE));
+	//TODO: FPU
+	try {
+	
+		activation = 1 / (1 + pow(e, -activation / CONST_RESPONSE));
+	
+	}
+	catch(...) {
+		cerr << "FP problem";
+		activation = 0;
+	}
 	return activation;
 
 }

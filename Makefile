@@ -25,8 +25,8 @@ $(OBJECTS):
 .PHONY : install 
 install:  
 	@echo Installing
-	cd $(SOURCEPATH); mv NeuralNetwork $(INSTALLPATH);
-	chmod +x NeuralNetwork
+	cd $(SOURCEPATH); chmod +x NeuralNetwork 
+	cd $(SOURCEPATH); mv NeuralNetwork $(INSTALLPATH)
 	@echo Done
 #	//cp $(headers) /usr/include/
 #	//cp $(headers) /usr/local/include/

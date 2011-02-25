@@ -1,5 +1,5 @@
 #include "GeneticAlgorithm.h"
-
+#include "cstdlib"
 
 
 using namespace std;

@@ -1,0 +1,15 @@
+*.obj
+*.pbd
+*.ilk
+*.pdb
+*.opensdf
+/Debug
+/src/Debug
+/src/Release
+/ipch
+*.user
+*.filters
+*.user
+*.suo
+*.sdf
+/src/*.o

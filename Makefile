@@ -1,5 +1,5 @@
 SOURCEPATH=./src/
-INSTALLPATH=../
+INSTALLPATH=../Release
 SOURCES=nn.cpp GeneticAlgorithm.cpp Layer.cpp Neuron.cpp
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=NeuralNetwork
@@ -33,7 +33,7 @@ install:
 
 .PHONY : clean
 clean:
-	cd $(sourcepath)
+	cd $(SOURCEPATH)
 	rm -rf ./*o 
 
 

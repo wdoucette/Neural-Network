@@ -1,0 +1,17 @@
+﻿Build started 2/24/2011 10:52:45 PM.
+     1>Project "C:\Documents and Settings\Rater\My Documents\dev\myrepo\nn\nn.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Release\nn.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       ClCompile:
+         All outputs are up-to-date.
+       Link:
+         All outputs are up-to-date.
+         nn.vcxproj -> C:\Documents and Settings\Rater\My Documents\dev\myrepo\Release\nn.exe
+       FinalizeBuildStatus:
+         Deleting file "Release\nn.unsuccessfulbuild".
+         Touching "Release\nn.lastbuildstate".
+     1>Done Building Project "C:\Documents and Settings\Rater\My Documents\dev\myrepo\nn\nn.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.60

@@ -1,0 +1,96 @@
+﻿        .sets input
+        {
+            border: 1px solid black;
+        }
+        .link
+        {
+            color: Blue;
+        }
+        .link:hover
+        {
+            cursor: pointer;
+        }
+        
+        .sets
+        {
+            width: 356px;
+            height: 145px;
+        }
+        #tbnInputs
+        {
+            width: 24px;
+        }
+        #tbnNeuronsPerHiddenLayer
+        {
+            width: 30px;
+        }
+        #tbnHiddenLayers
+        {
+            width: 30px;
+        }
+        #tbnOutputs
+        {
+            width: 30px;
+        }
+        #tbTarget
+        {
+            width: 180px;
+        }
+        #tbEpoch
+        {
+            width: 50px;
+        }
+        #status
+        {
+            width: 245px;
+            background-color: #CCCCCC;
+        }
+      
+        #tbTargets
+        {
+            width: 27px;
+        }
+        #imgResult0
+        {
+            width: 153px;
+        }
+        #imgResult2
+        {
+            width: 149px;
+        }
+        #imgResult1
+        {
+            width: 147px;
+            margin-top: 0px;
+        }
+        #log
+        {
+            width: 509px;
+            margin-left: 0px;
+        }
+    
+        #trainingSets
+        {
+            height: 134px;
+            width: 330px;
+        }
+        
+        #wrapper
+        {
+            width: 821px; 
+            margin-right: 85px; 
+            height: 540px; 
+            margin-left: 0px;    
+        }
+        
+        #imagepane
+        {
+            float: right; 
+            width: 388px; 
+            height: 345px; 
+            background-color: #CCCCCC;
+            margin-left: 113px;
+        }
+
+            
+      

@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html >
+<html>
+<head>
+    <title>Neural Network</title>
+    <script type="text/javascript" src="ui.js" /></script>
+    <script type="text/javascript" src="NeuralNetwork.js" ></script>
+    <link rel="stylesheet" href="ai.css" /> 
+</head>
+
+<body>
+    <div id="wrapper" >
+        <div id="imagepane" >
+            <div style="text-align: center">Neural Network Visualizer</div>
+            
+            <canvas style="border: 1px solid;" width="50" height="50" ondblclick="nnToImg(this)"
+                id="nnCanvas"></canvas>
+            <br />
+            <img draggable="true" ondragenter="dragEnterHandler(event)" ondragover="dragOverHandler(event)"
+                ondrop="dropHandler(event)" ondragstart="dragStartHandler(event)" style="border-style: solid;
+                border-color: inherit; border-width: 1px; height: 83px; width: 219px; margin-right: 11px;"
+                id="nnImg" /><br />
+            <div>
+                <div id="pKey">
+                    <input type="button" value="<--Prev" onclick="navPool(-1)" /><input type="button"
+                        value="Next->" onclick="navPool(+1)" />
+                    Show image
+                    <input type="checkbox" onclick="navPool(0,this.checked)" checked="checked" />
+                </div>
+                <div id="imgTitle"></div>
+                <div id="imgResult0"></div>
+                <div id="imgResult1"></div>
+                <div id="imgResult2"></div>
+                <div id="imgResult3"></div>
+                <div id="imgResult4"></div>
+                <div id="imgResult5"></div>
+                <div id="imgResult6"></div>
+                <div id="imgResult7"></div>
+                &nbsp;
+            </div>
+        </div>
+
+        <form action="javascript:main()" style="width: 301px">
+            Network<br />
+            <input id="tbnInputs" onkeyup="" type="text" value="3" />
+            Input(s)<br />
+            <input id="tbnInputNeurons" onkeyup="" type="text" value="4" />
+            # Input Layer Neurons
+            <br />
+            <input id="tbnOutputs" onkeyup="target = this.value" type="text" value="4" />Outputs(s)<br />
+            <br />
+            <input type="text" id="tbnHiddenLayers" onkeyup="" value="0" />
+            Hidden layers
+            <br />
+            <input type="text" id="tbnNeuronsPerHiddenLayer" onkeyup="" value="0" />
+            Neurons per layer<br />
+            <br />
+            <input type="text" id="tbMaxEpochs" onkeyup="maxEpochs=this.value" value="100000" />Max
+            Epochs:&nbsp;<br />
+            <div id="status" style="border-style: groove">
+                Waiting</div>
+            <br />
+            <input type="submit" id="btnTrain" onclick="" value="Train" />
+            <input type="button" id="btnPause" onclick="pause(this)" value="Pause" />
+            <input type="button" id="btnEnd" onclick="end()" value="End" /><br />
+            <input type="button" id="btnMode" onclick="random = random ? false : true" value="Mode" />
+            <input type="input" id="tbManualTest" />
+            <input type="button" id="btnManualTest" onclick="manualTest()" value="Manual Test" />
+            <br />
+        </form>
+    
+        <div id="trainingSets" class="sets">
+         <a href="javascript:addSet()">Add training set</a>
+            <br />
+          <span id="nSets"></span>
+            <br />
+
+            <!-- TODO: Dynamically populate training sets via addSet() -->
+            <trainingset>
+                <input type="text" value="-5,-5,-5" /><input type="text" value="0,0,0,0"/><br />
+                <input type="text" value="-5,-5,5" /><input type="text" value="0,0,0,1"/><br />
+                <input type="text" value="-5,5,-5" /><input type="text" value="0,0,1,0"/><br />
+                <input type="text" value="-5,5,5" /><input type="text" value="0,1,0,0"/>
+                <input type="text" value="5,-5,-5" /><input type="text" value="1,0,0,0"/>
+            
+            </trainingset>
+        </div>
+    </div>
+    
+    <div id='log'><br />Log</div>
+
+</body>
+</html>

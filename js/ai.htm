@@ -9,16 +9,11 @@
 
 <body>
     <div id="wrapper" >
-        <div id="imagepane" >
-            <div style="text-align: center">Neural Network Visualizer</div>
+        <div id="imagePane" >
+            <span id="imagePaneTitle">Neural Network Visualizer</span><br />
             
-            <canvas style="border: 1px solid;" width="50" height="50" ondblclick="nnToImg(this)"
-                id="nnCanvas"></canvas>
-            <br />
-            <img draggable="true" ondragenter="dragEnterHandler(event)" ondragover="dragOverHandler(event)"
-                ondrop="dropHandler(event)" ondragstart="dragStartHandler(event)" style="border-style: solid;
-                border-color: inherit; border-width: 1px; height: 83px; width: 219px; margin-right: 11px;"
-                id="nnImg" /><br />
+            <canvas ondblclick="nnToImg(this)" id="nnCanvas"></canvas><br />
+            <img id="nnImg" draggable="true" ondragenter="dragEnterHandler(event)" ondragover="dragOverHandler(event)" ondrop="dropHandler(event)" ondragstart="dragStartHandler(event)" / ><br />
             <div>
                 <div id="pKey">
                     <input type="button" value="<--Prev" onclick="navPool(-1)" /><input type="button"
@@ -37,7 +32,8 @@
                 <div id="imgResult7"></div>
                 &nbsp;
             </div>
-        </div>
+        </div> 
+        <!-- end imagePane-->
 
         <form action="javascript:main()" style="width: 301px">
             Network<br />
@@ -54,11 +50,8 @@
             <input type="text" id="tbnNeuronsPerHiddenLayer" onkeyup="" value="0" />
             Neurons per layer<br />
             <br />
-            <input type="text" id="tbMaxEpochs" onkeyup="maxEpochs=this.value" value="100000" />Max
-            Epochs:&nbsp;<br />
-            <div id="status" style="border-style: groove">
-                Waiting</div>
-            <br />
+            Max Epochs:<input type="text" id="tbMaxEpochs" onkeyup="maxEpochs=this.value" value="100000" />
+            <div id="status" style="border-style: groove">ok</div><br />
             <input type="submit" id="btnTrain" onclick="" value="Train" />
             <input type="button" id="btnPause" onclick="pause(this)" value="Pause" />
             <input type="button" id="btnEnd" onclick="end()" value="End" /><br />
@@ -69,22 +62,21 @@
         </form>
     
         <div id="trainingSets" class="sets">
-         <a href="javascript:addSet()">Add training set</a>
-            <br />
+         <a href="javascript:addSet()">Add training set</a><br />
           <span id="nSets"></span>
             <br />
-
             <!-- TODO: Dynamically populate training sets via addSet() -->
             <trainingset>
-                <input type="text" value="-5,-5,-5" /><input type="text" value="0,0,0,0"/><br />
-                <input type="text" value="-5,-5,5" /><input type="text" value="0,0,0,1"/><br />
-                <input type="text" value="-5,5,-5" /><input type="text" value="0,0,1,0"/><br />
+                <input type="text" value="-5,-5,-5" /><input type="text" value="0,0,0,0"/>
+                <input type="text" value="-5,-5,5" /><input type="text" value="0,0,0,1"/>
+                <input type="text" value="-5,5,-5" /><input type="text" value="0,0,1,0"/>
                 <input type="text" value="-5,5,5" /><input type="text" value="0,1,0,0"/>
-                <input type="text" value="5,-5,-5" /><input type="text" value="1,0,0,0"/>
-            
+                <input type="text" value="5,-5,-5" /><input type="text" value="1,0,0,0"/>     
             </trainingset>
         </div>
+
     </div>
+    <!-- end wrapper -->
     
     <div id='log'><br />Log</div>
 

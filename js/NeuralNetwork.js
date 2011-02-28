@@ -36,8 +36,8 @@ var gMutations = 0;
 Array.prototype.forEach = function (fn) {
 
     // Pass key/value pairs to returning function.
-    var i = 0;
-    for (; i < this.length; i++) {
+
+    for ( var i = 0; i < this.length; i++) {
         fn(i, this[i]);
     }
 };
@@ -66,37 +66,42 @@ function main() {
     // Resume.
     //if (typeof (weights) != "undefined") { resume(); return; }
 
-    var settings;
+    var Settings;
     var nInputs;
     var nOutputs;
     var nHidden;
     var nNeurons;
     var pool;
     var seed;
-    settings = getUISettings();
 
-    // TODO validation.  
-    //settings.validate();
-    nInputs = settings.nInputs;
-    nInputNeurons = settings.nInputNeurons;
-    nHidden = settings.nHidden;
-    nNeurons = settings.nNeurons;
-    nOutputs = settings.nOutputs;
-   
-    maxEpochs = settings.maxEpochs;
-    trainingSets = settings.trainingSets();
+    // Parse setting from UI.
+    Settings = getUISettings();
 
+    // TODO: Validate settings.  
+    // Settings.validate();
+    nInputs = Settings.nInputs;
+    nInputNeurons = Settings.nInputNeurons;
+    nHidden = Settings.nHidden;
+    nNeurons = Settings.nNeurons;
+    nOutputs = Settings.nOutputs;
+
+    maxEpochs = Settings.maxEpochs;
+    trainingSets = Settings.trainingSets();
+
+    // TODO: Encapsulate UI interface. 
     document.getElementById('status').style.backgroundColor = "Lightgray";
     
+
     // Initialize.
     count = 0;
 
-    // TODO implement log.clear();
+    // TODO: Implement log.clear().
     document.getElementById("log").innerHTML = "";
 
-
+    // Create a new Neural Network and Genetic Algorithm.
     myNN = new NeuralNet(nInputs, nInputNeurons, nHidden, nNeurons, nOutputs);
     myGA = new GeneticAlgorithm();
+    
     pool = new Array();
     seed = myNN.getWeights();
     
@@ -106,7 +111,7 @@ function main() {
     log(myNN.synapses + " synapses.");
     log("Network entropy: " + (wordLength * myNN.synapses).toExponential());
 
-    // Start ticks.
+    // Start ticker.
     startTime = new Date();
     ticks();
 }
@@ -119,15 +124,16 @@ function resume() { ticks(weights); return }
 function ticks() {
 
     var completed = false;
-    // Pause timer.
+   
+    // Pause ticker.
     clearInterval(ticksTimer);
 
-
-    // Do stuff.
+    // Do stuff...
+    
     myGA.train();    
-   
+
+    // Evaluate completion status.
     completed = navPool(0);
-       
     status("Epoch: " + (count + 1));
 
     count++;
@@ -141,26 +147,35 @@ function ticks() {
             ticks();
         }, 10);
     }
-    
+
+
+    // Else ticker remains suspended -wait for a UI event.
 }
 
 
 function NeuralNet(nInputs, nInputNeurons, nHiddenLayers, nNeuronsPerHiddenLayer, nOutputs) {
 
     // TODO validate params.
-
+//    for (i = 0; i < arguments.length; i++) {
+//        alert(arguments[0].toString());
+//        for (j = 0; j < arguments[i].length; j++) {
+//            alert(arguments[i][j]);
+//        }
+//    
+//    }
+    this.neurons = 0;
+    this.synapses = 0;
+    
     this.nInputs = parseInt(nInputs);
     this.nInputNeurons = parseInt(nInputNeurons);
     this.nOutputs = parseInt(nOutputs);
     this.nHiddenLayers = parseInt(nHiddenLayers);
     this.nNeuronsPerHiddenLayer = parseInt(nNeuronsPerHiddenLayer);
-    this.neurons = 0;
-    this.synapses = 0;
     
-    // Array of NN weights in (wordLength) bit number.
+    // Current weight array [nSynapses][wordLength].
     this.weights = new Array();
 
-    // NN Layers. InputLayer + nHiddenLayers + OutputLayer.
+    // Define NeuralNetwork Layers:
 
     // Input layer.
     this.neuronLayer(this.nInputNeurons, this.nInputs);
@@ -198,23 +213,14 @@ NeuralNet.prototype.update = function (inputs, newWeights) {
 
 NeuralNet.prototype.getWeights = function () {
 
-    var result = new Array();;
-
-    // TODO Decimal place adapts to word length.
-
-    // Convert (10-bit) number into +- decimal.
-    this.weights.forEach(function (word, value) {
-        result.push(((value - (Math.pow(2, wordLength) * .5)) *.01));
-    });
-
-    return result;
+    return this.weights;
 }
 
 
 NeuralNet.prototype.getWeight = function (synapse) {
 
     // Retruns an individual synapse weight.
-
+   
     return ((this.weights[synapse] - (Math.pow(2, wordLength) * .5)) *.01);
 
 }
@@ -267,7 +273,7 @@ NeuralNet.prototype.getOutput = function (xInputs) {
         for (j = 0; j < this.nInputs; j++) {
 
             activation += xInputs[j] * this.getWeight(j);
-
+          
         }
         // Bias conditioned to +/- 5.
         activation += (-1 * this.getWeight(j));
@@ -329,14 +335,16 @@ NeuralNet.prototype.getOutput = function (xInputs) {
         offset += j + 1;
 
     }
+
     return output;
 }
 
 
 function randomClamped() {
 
-    // A random wordLength number (E.g., 10 bit = 0~1023)
-    return Math.floor(Math.random() * Math.pow(2, wordLength));
+    // Returns a random wordLength number, E.g., 10 bit = 0~1023.
+     
+    return Math.floor( getRandom(0,1) * Math.pow(2, wordLength) );
 
 }
 
@@ -348,15 +356,16 @@ function sigmoid(activation, response) {
 
 function mutate(value) {
 
+    // Returns value with bitwise mutation -flips a random bit. 
+    
+    // XOR bit mask.
     var mask;
 
-    // XOR random bit mask.
-
-    // 1~wordLength
+    // 1 ~ wordLength
     mask = Math.round(Math.random() * Math.ceil(Math.log(Math.pow(2, wordLength)) / Math.log(2) - 1));
     
-    //2^(n-1) - 0,1,2,4,8...
-    mask = Math.floor(Math.pow(2, (mask - 1)));     
+    // 2^(n-1) - 0,1,2,4,8...
+    mask = Math.floor( Math.pow( 2, (mask - 1) ) );     
 
     // XOR of value.
     return (value ^ mask);
@@ -372,6 +381,13 @@ function GeneticAlgorithm() {
 
 }
 
+
+getRandom = function (min, max) {
+
+    return max - (Math.random() * (max-min));
+
+
+}
 GeneticAlgorithm.prototype.initPool = function (wordLength, size, seed) {
 
     // Initialize pool with random values.
@@ -387,7 +403,7 @@ GeneticAlgorithm.prototype.initPool = function (wordLength, size, seed) {
 
         var value = new Array();
         for (j = 0; j < seed.length; j++) {
-            value.push(Math.floor(Math.random() * Math.pow(2, wordLength)));
+            value.push(Math.floor(getRandom(0,1) * Math.pow(2, wordLength)));
         }
 
         genePool.push(value);
@@ -404,7 +420,7 @@ GeneticAlgorithm.prototype.epoch = function (genePool) {
     // genePool.push(latentGenome);
 
     var ngChromosones = new Array();
-
+    chromosoneLength = genePool[0].length;
 
     // Apply genetic crosssover 70% chance.
     // Apply genetic mutation .1% chance.
@@ -421,75 +437,86 @@ GeneticAlgorithm.prototype.epoch = function (genePool) {
 
         genePool[i].forEach(function (key, value) {
 
-            var rnd = Math.floor(Math.random() / mutationRate) + 1;
-           
-            if (rnd < (1 / mutationRate)) {
-
-                value = mutate(value);
-                gMutations++;
-
-            }
-
             xChromosone.push(value);
         });
 
         // Process against all other parent genomes
-        for (j = genePool.length - 1; j >= 0; j--) {
+        for (j = 0; j < genePool.length; j++) {
 
             var yChromosone = new Array();
-            var crossoverPoint = Math.round(Math.random() * wordLength);
+            var crossoverPoint = Math.round(getRandom(0, 1) * wordLength * chromosoneLength);
 
             // Do not cross with self
-            //if (j == i) continue;
+            if (j == i) continue;
 
-            rnd = Math.random();
+
             // Not tonight, I have a headache...
-            if (rnd > crossoverRate) continue;
+            if (getRandom(0, 1) > crossoverRate) continue;
 
             // Inherit yChromosone from parent.
             genePool[j].forEach(function (key, value) {
-
-                var rnd = Math.floor(Math.random() / mutationRate) + 1;
-
-                if (rnd < (1 / mutationRate)) {
-
-                    value = mutate(value);
-                    gMutations++;
-
-                }
 
                 yChromosone.push(value);
 
             });
 
 
-            // Combined xy pairs into a next-generation chromosone.
+            // Apply crossover between genomes creating a next-generation chromosone.
 
-            var offspring = new Array();
+            var xy = new Array();
+            var leftWords = Math.floor(crossoverPoint / wordLength);
 
-            offspring = offspring.concat(xChromosone.slice(0, crossoverPoint), yChromosone.slice(crossoverPoint));
+            for (k = 0; k < leftWords; k++) {
 
-            //            offspring.forEach(function (key, value) {
+                xy[k] = xChromosone[k];
+                var rnd = getRandom(0, 1); // Math.floor(Math.random() / mutationRate) + 1;
 
+                if (rnd > (mutationRate)) {
 
-            //                var rnd = Math.floor(Math.random() / mutationRate) + 1;
-            //            
-            //                if (rnd == (1 / mutationRate)) {
+                    xy[k] = mutate(xy[k]);
+                    gMutations++;
 
-            //                    var result = mutate(value);
+                }
+            }
 
-            //                    offspring[key] = (result);
+            // Split point.
+            if (leftWords) {
+                //
+                ///////////////////////////	
 
-            //                    gMutations++;
+                // Crossover X MSB.
+                // 2^(n) -1 eg, 10-bit base = 1023 1111111111
+                var base = Math.pow(2.0, wordLength) - 1;
+                var msb = base - (Math.pow(2.0, wordLength - crossoverPoint % wordLength) - 1);
+                var lsb = base - msb;
 
-            //                }
+                xy[k] = (xChromosone[k] & msb);
 
-            //            });
+                // Crossover Y LSB.
+                xy[k] += (yChromosone[k] & lsb);
+                //log(xy[k] + " " + crossoverPoint +" " + xChromosone[k]+ " " + yChromosone[k]);
+                k++;
+            }
 
+            // Crossover remaining words from Y.
+            for (; k < chromosoneLength; k++) {
+
+                xy[k] = yChromosone[k];
+
+                // Random mutaton.
+                var rnd = getRandom(0, 1);
+
+                if (rnd > (mutationRate)) {
+
+                    xy[k] = mutate(xy[k]);
+                    gMutations++;
+                }
+
+            }
 
             ngChromosones[ngChromosones.length] = new Array();
 
-            offspring.forEach(function (key, value) {
+            xy.forEach(function (key, value) {
 
                 ngChromosones[ngChromosones.length - 1].push(value);
 
@@ -502,7 +529,7 @@ GeneticAlgorithm.prototype.epoch = function (genePool) {
 
     // Include parents - Parent pool survives WITHOUT evolving.
 
-    if (includeParents) ngChromosones = ngChromosones.concat(genePool.slice(0, 1));
+    if (includeParents) ngChromosones = ngChromosones.concat(genePool.slice(0, 5));
 
     ngChromosones = ngChromosones.unique();
 
@@ -739,7 +766,7 @@ function navPool(n, navToggle) {
 
 
         results.forEach(function (index, value) {
-            var html = parseFloat(value).toFixed(0);
+            var html = parseFloat(value).toFixed(0)+" ";
             document.getElementById(ele).innerHTML += html + " ";
             if(targets[index] == Math.round(value)) match += targets[index];
         });

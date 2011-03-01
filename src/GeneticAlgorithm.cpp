@@ -207,7 +207,7 @@ int GeneticAlgorithm::epoch(){
 				// Crossover X MSB.
 				// 2^(n) -1 eg, 10-bit base = 1023 1111111111
 				short base = pow( 2.0, wordLength ) -1;
-				short msb = base - ( pow( 2.0, crossoverPoint % wordLength ) -1 );
+				short msb = base - (pow( 2.0, crossoverPoint % wordLength ) -1 );
 				short lsb = base - msb;
 				xy[k] = x[k] & msb;
 

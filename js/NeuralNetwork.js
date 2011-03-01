@@ -66,46 +66,47 @@ function main() {
     // Resume.
     //if (typeof (weights) != "undefined") { resume(); return; }
 
-    var Settings;
     var nInputs;
     var nOutputs;
     var nHidden;
     var nNeurons;
-    var pool;
+
+    var Settings;
+   
     var seed;
-
-    // Parse setting from UI.
-    Settings = getUISettings();
-
-    // TODO: Validate settings.  
-    // Settings.validate();
-    nInputs = Settings.nInputs;
-    nInputNeurons = Settings.nInputNeurons;
-    nHidden = Settings.nHidden;
-    nNeurons = Settings.nNeurons;
-    nOutputs = Settings.nOutputs;
-
-    maxEpochs = Settings.maxEpochs;
-    trainingSets = Settings.trainingSets();
-
-    // TODO: Encapsulate UI interface. 
-    document.getElementById('status').style.backgroundColor = "Lightgray";
-    
+    var poolSize = 5;
 
     // Initialize.
     count = 0;
 
+    // Parse setting from UI.
+    Settings = getUISettings();
+   
+    // TODO: Validate settings.  
+    // Settings.validate();
+    nInputs =       Settings.nInputs;
+    nInputNeurons = Settings.nInputNeurons;
+    nHidden =       Settings.nHidden;
+    nNeurons =      Settings.nNeurons;
+    nOutputs =      Settings.nOutputs;
+
+    maxEpochs =     Settings.maxEpochs;
+    trainingSets =  Settings.trainingSets();
+
+    // TODO: Encapsulate UI interface. 
+    document.getElementById('status').style.backgroundColor = "Lightgray";
+   
+   
     // TODO: Implement log.clear().
     document.getElementById("log").innerHTML = "";
 
     // Create a new Neural Network and Genetic Algorithm.
     myNN = new NeuralNet(nInputs, nInputNeurons, nHidden, nNeurons, nOutputs);
-    myGA = new GeneticAlgorithm();
     
-    pool = new Array();
     seed = myNN.getWeights();
+    myGA = new GeneticAlgorithm(seed.length);
     
-    myGA.initPool(wordLength, seedSizeN, seed);
+    myGA.initPool(seed,poolSize);
    
     log(myNN.neurons + " Neurons created.");
     log(myNN.synapses + " synapses.");
@@ -129,23 +130,24 @@ function ticks() {
     clearInterval(ticksTimer);
 
     // Do stuff...
-    
-    myGA.train();    
-
+    myGA.train();
     // Evaluate completion status.
     completed = navPool(0);
+    
     status("Epoch: " + (count + 1));
 
     count++;
 
     if (count < maxEpochs && !completed ) {
-    
-        // Resume.
-        myGA.epoch(myGA.pool.slice(0, 5));
 
+        // Resume.
+
+        // Evolve network.
+        myGA.epoch(myGA.pool.slice(0, 5));
+    
         ticksTimer = setInterval(function () {
             ticks();
-        }, 10);
+        }, 1);
     }
 
 
@@ -186,7 +188,7 @@ function NeuralNet(nInputs, nInputNeurons, nHiddenLayers, nNeuronsPerHiddenLayer
     // Output layer.
     this.neuronLayer(this.nOutputs, (this.nNeuronsPerHiddenLayer == 0) ? this.nInputNeurons : this.nNeuronsPerHiddenLayer);
 
-
+    
     function myPrivate() { } 
 
 }
@@ -219,10 +221,10 @@ NeuralNet.prototype.getWeights = function () {
 
 NeuralNet.prototype.getWeight = function (synapse) {
 
-    // Retruns an individual synapse weight.
-   
-    return ((this.weights[synapse] - (Math.pow(2, wordLength) * .5)) *.01);
+    // Returns an individual synapse weight.
+    var retval = ((this.weights[synapse] - (Math.pow(2, wordLength) * .5)) * .01);
 
+    return retval;
 }
 
 NeuralNet.prototype.getBinaryWeight = function () {
@@ -258,6 +260,7 @@ NeuralNet.prototype.getOutput = function (xInputs) {
     var i;
     var activation = 0;
     var offset = 0;
+    var synapses = 0;
 
     // Recures network layers: input, nHiddenLayers and output to calculate and
     // return the NN's output(s)
@@ -267,25 +270,23 @@ NeuralNet.prototype.getOutput = function (xInputs) {
 
 
     // Each neuron in input layer.
-    for (i = 0; i < this.nInputNeurons; i++) {
+    for ( i = 0; i < this.nInputNeurons; i++ ) {
 
         // Program neuron's synapses.
-        for (j = 0; j < this.nInputs; j++) {
+        for ( j = 0; j < this.nInputs; j++ ) {
 
-            activation += xInputs[j] * this.getWeight(j);
-          
+            activation += xInputs[j] * this.getWeight( offset++ );
+
         }
         // Bias conditioned to +/- 5.
-        activation += (-1 * this.getWeight(j));
-        output.push(5 - (sigmoid(activation, CONSTResponse))*10);
-        offset += j + 1;
-        
+        activation += (-1 * this.getWeight(offset));
+        output.push( 5 - (sigmoid(activation, CONSTResponse)) * 10 );
+
         //Do next neuron in this layer
         activation = 0;
     }
     xInputs = output;
     output = new Array();
-
 
     // Each hidden layer.
     for (i = 0; i < this.nHiddenLayers; i++) {
@@ -293,28 +294,29 @@ NeuralNet.prototype.getOutput = function (xInputs) {
         output = new Array();
 
         // Each neuron.
-        for (j = 0; j < this.nNeuronsPerHiddenLayer; j++) {
+        for ( j = 0; j < this.nNeuronsPerHiddenLayer; j++ ) {
 
             // Calculate inputs of this neuron.
-            for (k = 0; k < xInputs.length; k++) {
+            for ( k = 0; k < xInputs.length; k++ ) {
 
-                activation += xInputs[k] * this.getWeight(k + offset);
+                activation += xInputs[k] * this.getWeight( offset++ );
             }
             // Bias conditioned to +/- 5.
-            activation += (-1 * this.getWeight(k + offset));
-            output.push(5 - (sigmoid(activation, CONSTResponse))*10); 
+            activation += (-1 * this.getWeight( offset++ ));
+            output.push( 5 - (sigmoid(activation, CONSTResponse)) * 10 );
 
             // Do next neuron in this layer.
             activation = 0;
-            offset += k + 1;
+            
 
         }
 
         // Outputs become inputs to next layer.
+
+        // Do next hidden layer
         xInputs = output;
         output = new Array();
 
-        // Do next hidden layer
     }
 
 
@@ -326,13 +328,15 @@ NeuralNet.prototype.getOutput = function (xInputs) {
         // Calculate inputs of this neuron.
         for (j = 0; j < xInputs.length; j++) {
 
-            activation += xInputs[j] * this.getWeight(j + offset);
+            activation += xInputs[j] * this.getWeight( offset++ );
         }
-        // Bias uncoditioned 0~1 output.
-        activation += (-1 * this.getWeight(j + offset));
+        // Bias.
+        activation += (-1 * this.getWeight( offset++ ));
+
+        // Uncoditioned 0~1 output.
         output.push(sigmoid(activation, CONSTResponse));
         activation = 0;
-        offset += j + 1;
+        
 
     }
 
@@ -374,11 +378,12 @@ function mutate(value) {
 
 
 /////GA
-function GeneticAlgorithm() {
+function GeneticAlgorithm(chromosoneLength) {
 
 // Holds the population
     this.pool = new Array();
-
+    this.chromosoneLength  = chromosoneLength;
+         
 }
 
 
@@ -388,22 +393,25 @@ getRandom = function (min, max) {
 
 
 }
-GeneticAlgorithm.prototype.initPool = function (wordLength, size, seed) {
+GeneticAlgorithm.prototype.initPool = function (seed, poolSize) {
 
     // Initialize pool with random values.
 
     // wordLength - bits per geneome.
     // size - population of chromosones (returns ~size^2-size, depending on crossoverRate )
-    // seed - a sample chromosone (indicates genome count and ...?)
+    // seed - sample chromosone
+    this.chromosoneLength = seed.length;
 
     var genePool = new Array();
-    genePool.push(seed);
+    //genePool.push(seed);
 
-    for (i = 0; i < size - 1; i++) {
+    for (i = 0; i < poolSize; i++) {
 
         var value = new Array();
+        
         for (j = 0; j < seed.length; j++) {
-            value.push(Math.floor(getRandom(0,1) * Math.pow(2, wordLength)));
+
+            value.push(Math.floor(getRandom(0, 1) * Math.pow(2, wordLength)));
         }
 
         genePool.push(value);
@@ -420,7 +428,6 @@ GeneticAlgorithm.prototype.epoch = function (genePool) {
     // genePool.push(latentGenome);
 
     var ngChromosones = new Array();
-    chromosoneLength = genePool[0].length;
 
     // Apply genetic crosssover 70% chance.
     // Apply genetic mutation .1% chance.
@@ -444,10 +451,10 @@ GeneticAlgorithm.prototype.epoch = function (genePool) {
         for (j = 0; j < genePool.length; j++) {
 
             var yChromosone = new Array();
-            var crossoverPoint = Math.round(getRandom(0, 1) * wordLength * chromosoneLength);
+            var crossoverPoint = Math.round(getRandom(0, 1) * wordLength * this.chromosoneLength);
 
             // Do not cross with self
-            if (j == i) continue;
+            //if (j == i) continue;
 
 
             // Not tonight, I have a headache...
@@ -487,6 +494,8 @@ GeneticAlgorithm.prototype.epoch = function (genePool) {
                 // Crossover X MSB.
                 // 2^(n) -1 eg, 10-bit base = 1023 1111111111
                 var base = Math.pow(2.0, wordLength) - 1;
+
+                // known bug
                 var msb = base - (Math.pow(2.0, wordLength - crossoverPoint % wordLength) - 1);
                 var lsb = base - msb;
 
@@ -494,12 +503,23 @@ GeneticAlgorithm.prototype.epoch = function (genePool) {
 
                 // Crossover Y LSB.
                 xy[k] += (yChromosone[k] & lsb);
-                //log(xy[k] + " " + crossoverPoint +" " + xChromosone[k]+ " " + yChromosone[k]);
+               
+                // Random mutaton.
+                var rnd = getRandom(0, 1);
+
+                if (rnd > (mutationRate)) {
+
+                    xy[k] = mutate(xy[k]);
+                    gMutations++;
+                }
+
+
+
                 k++;
             }
 
             // Crossover remaining words from Y.
-            for (; k < chromosoneLength; k++) {
+            for (; k < this.chromosoneLength; k++) {
 
                 xy[k] = yChromosone[k];
 
@@ -514,6 +534,7 @@ GeneticAlgorithm.prototype.epoch = function (genePool) {
 
             }
 
+            //status(gMutations);
             ngChromosones[ngChromosones.length] = new Array();
 
             xy.forEach(function (key, value) {
@@ -529,11 +550,17 @@ GeneticAlgorithm.prototype.epoch = function (genePool) {
 
     // Include parents - Parent pool survives WITHOUT evolving.
 
+
+    //ngChromosones = ngChromosones.unique();
+
+    //this.pool = this.poolgenePool.slice(0, 5);
+    //this.pool = genePool.concat(ngChromosones);
+
     if (includeParents) ngChromosones = ngChromosones.concat(genePool.slice(0, 5));
 
-    ngChromosones = ngChromosones.unique();
-
     this.pool = ngChromosones;
+
+    
 
 }
 
@@ -557,6 +584,18 @@ GeneticAlgorithm.prototype.getWeights = function () {
 
 }
 
+GeneticAlgorithm.prototype.getIndexToBinaryString = function (value) {
+
+
+    var binary = new Array();
+        var out = value.toString(2);
+        while (out.length < wordLength) out = "0" + out;
+        binary.push(out);
+
+    return binary;
+
+}
+
 GeneticAlgorithm.prototype.getBinaryString = function (index) {
 
 
@@ -572,11 +611,9 @@ GeneticAlgorithm.prototype.getBinaryString = function (index) {
 
 }
 
-
 GeneticAlgorithm.prototype.train = function () {
 
     var pool = this.pool;
-
 
     // Each chromosone.
 
@@ -597,7 +634,11 @@ GeneticAlgorithm.prototype.train = function () {
             results.forEach(function (index, value) {
 
                 var delta = Math.abs(targets[index] - results[index]);
-                if (delta < .5) delta *= delta;
+//                if (delta < .5) {
+
+                    delta *= delta;
+  //              }
+
                 pool[pKey].fs += delta;
 
             });
@@ -606,17 +647,14 @@ GeneticAlgorithm.prototype.train = function () {
 
     });
 
-    
+
     // Order pool by lowest (best) fitness score.
 
     pool.sort(function (a, b) {
         return (a.fs) - (b.fs);
     });
 
-    //WD -add some diversity.
-    //this.pool = new Array();
-    //this.pool = this.pool.concat(pool.slice(0, 2), pool.slice(pool.length - 2, 2));
-    //  alert(this.pool.length);
+    
     return;
 
 }
@@ -735,8 +773,13 @@ function manualTest() {
     alert(output);
 }
 
+
+
 var navPoolIndex = 0;
 var navDisabled = false;
+
+
+
 function navPool(n, navToggle) {
 
     var results;
@@ -751,8 +794,21 @@ function navPool(n, navToggle) {
     if (navPoolIndex > myGA.pool.length - 1) navPoolIndex = 0;
     if (navPoolIndex < 0) navPoolIndex = myGA.pool.length - 1;
 
-    document.getElementById('imgTitle').innerHTML = "Chromosone #: " + navPoolIndex;
+    document.getElementById('imgTitle').innerHTML = "Chromosone #: " + navPoolIndex + " ";
+    document.getElementById('imgTitle').innerHTML += myGA.pool[navPoolIndex].fs; //parseFloat(value).toFixed(2) + " ";
     
+    if (count % 500 == 0) {
+
+        myGA.pool[0].forEach(function (key, value) {
+
+            log(myGA.getIndexToBinaryString(value), 1);
+          });
+        log("");
+         
+          log("Mutations " + gMutations);
+        
+    }
+
     // Each training set.
     trainingSets.forEach(function (tsKey, value) {
 
@@ -763,10 +819,11 @@ function navPool(n, navToggle) {
 
         ele = 'imgResult' + tsKey;
         document.getElementById(ele).innerHTML = "";
-
+           
 
         results.forEach(function (index, value) {
-            var html = parseFloat(value).toFixed(0)+" ";
+            var html = parseFloat(value).toFixed(1)+"--";
+            
             document.getElementById(ele).innerHTML += html + " ";
             if(targets[index] == Math.round(value)) match += targets[index];
         });

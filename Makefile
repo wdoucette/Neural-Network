@@ -33,7 +33,6 @@ install:
 
 .PHONY : clean
 clean:
-	cd $(SOURCEPATH)
-	rm -rf ./*o 
+	cd $(SOURCEPATH); rm -rf ./*o 
 
 

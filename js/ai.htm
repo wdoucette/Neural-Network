@@ -1,69 +1,82 @@
 ﻿<!DOCTYPE html >
 <html>
 <head>
-    <title>Neural Network</title>
-    <script type="text/javascript" src="ui.js" /></script>
-    <script type="text/javascript" src="NeuralNetwork.js" ></script>
-    <link rel="stylesheet" href="ai.css" /> 
+    <title>Neural Network Trainer</title>
+    <script type="text/javascript" src="ui.js" />
+    </script>
+    <script type="text/javascript" src="NeuralNetwork.js"></script>
+    <link rel="stylesheet" href="ai.css" />
 </head>
-
 <body>
-    <div id="wrapper" >
-        <div id="imagePane" >
+    <div id="wrapper">
+        <div id="imagePane">
             <span id="imagePaneTitle">Neural Network Visualizer</span><br />
+            <canvas ondblclick="nnToImg(this)" id="nnCanvas"></canvas>
+            <br />
+            <img id="nnImg" draggable="true" ondragenter="dragEnterHandler(event)" ondragover="dragOverHandler(event)"
+                ondrop="dropHandler(event)" ondragstart="dragStartHandler(event)" />
+            <br />
             
-            <canvas ondblclick="nnToImg(this)" id="nnCanvas"></canvas><br />
-            <img id="nnImg" draggable="true" ondragenter="dragEnterHandler(event)" ondragover="dragOverHandler(event)" ondrop="dropHandler(event)" ondragstart="dragStartHandler(event)" / ><br />
-            <div>
                 <div id="pKey">
-                    <input type="button" value="<--Prev" onclick="navPool(-1)" /><input type="button"
-                        value="Next->" onclick="navPool(+1)" />
+                    <input type="button" value="<--Prev" onclick="setCurrentChromosone(-1)" /><input
+                        type="button" value="Next->" onclick="setCurrentChromosone(+1)" />
                     Show image
-                    <input type="checkbox" onclick="navPool(0,this.checked)" checked="checked" />
+                    <input type="checkbox" onclick="setCurrentChromosone(0,this.checked)" checked="checked" />
                 </div>
-                <div id="imgTitle"></div>
-                <div id="imgResult0"></div>
-                <div id="imgResult1"></div>
-                <div id="imgResult2"></div>
-                <div id="imgResult3"></div>
-                <div id="imgResult4"></div>
-                <div id="imgResult5"></div>
-                <div id="imgResult6"></div>
-                <div id="imgResult7"></div>
+                 <input type="input" id="tbManualTest" />
+                 <input type="button" id="btnManualTest" onclick="manualTest()" value="Manual Test" />
+       
+                <div id="imgTitle">
+                </div>
+                <div id="imgResult0">
+                </div>
+                <div id="imgResult1">
+                </div>
+                <div id="imgResult2">
+                </div>
+                <div id="imgResult3">
+                </div>
+                <div id="imgResult4">
+                </div>
+                <div id="imgResult5">
+                </div>
+                <div id="imgResult6">
+                </div>
+                <div id="imgResult7">
+                </div>
                 &nbsp;
-            </div>
-        </div> 
-        <!-- end imagePane-->
-
-        <form action="javascript:main()" style="width: 301px">
-            Network<br />
+        </div><!-- end imagePane-->
+        
+        <div id="networkConfig">
+            <form action="javascript:main( _UI() )" style="width: 301px">
+            <span style="display: block;text-align: center; font-weight:bold" >Network Configuration:</span>
             <input id="tbnInputs" onkeyup="" type="text" value="3" />
             Input(s)<br />
             <input id="tbnInputNeurons" onkeyup="" type="text" value="4" />
             # Input Layer Neurons
             <br />
-            <input id="tbnOutputs" onkeyup="target = this.value" type="text" value="4" />Outputs(s)<br />
             <br />
             <input type="text" id="tbnHiddenLayers" onkeyup="" value="0" />
             Hidden layers
             <br />
             <input type="text" id="tbnNeuronsPerHiddenLayer" onkeyup="" value="0" />
             Neurons per layer<br />
+            <input id="tbnOutputs" onkeyup="target = this.value" type="text" value="4" />Outputs(s)<br />
             <br />
-            Max Epochs:<input type="text" id="tbMaxEpochs" onkeyup="maxEpochs=this.value" value="100000" />
-            <div id="status" style="border-style: groove">ok</div><br />
-            <input type="submit" id="btnTrain" onclick="" value="Train" />
-            <input type="button" id="btnPause" onclick="pause(this)" value="Pause" />
-            <input type="button" id="btnEnd" onclick="end()" value="End" /><br />
-            <input type="button" id="btnMode" onclick="random = random ? false : true" value="Mode" />
-            <input type="input" id="tbManualTest" />
-            <input type="button" id="btnManualTest" onclick="manualTest()" value="Manual Test" />
-            <br />
+        </div>
+        <div id="status" style="border-style: groove">
+        </div>
+        <br />
+         Max Epochs:<input type="text" id="tbMaxEpochs" onkeyup="maxEpochs=this.value" value="100000" />
+         <br />
+        <input type="submit" id="btnTrain" onclick="" value="Train" />
+        <input type="button" id="btnPause" onclick="pause(this)" value="Pause" />
+        <input type="button" id="btnEnd" onclick="end()" value="End" /><br />
+        <!--   <input type="button" id="btnMode" onclick="random = random ? false : true" value="Mode" />-->
         </form>
-    
         <div id="trainingSets" class="sets">
-         <a href="javascript:addSet()">Add training set</a><br />
-          <span id="nSets"></span>
+            <a href="javascript:addSet()">Add training set</a><br />
+            <span id="nSets"></span>
             <br />
             <!-- TODO: Dynamically populate training sets via addSet() -->
             <trainingset>
@@ -74,11 +87,10 @@
                 <input type="text" value="5,-5,-5" /><input type="text" value="1,0,0,0"/>     
             </trainingset>
         </div>
-
     </div>
     <!-- end wrapper -->
-    
-    <div id='log'><br />Log</div>
-
+    <div id='log'>
+        <br />
+        Log</div>
 </body>
 </html>

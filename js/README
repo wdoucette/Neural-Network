@@ -1,0 +1,13 @@
+// NeuralNetwork API Copyright 2010, Wayne Doucette: http://wayne-doucette.blogspot.com. All Rights Reserved.
+
+// Simplified BSD License Applies.
+
+Usage: myNN = new NeuralNetwork(nInputs, nInputNeurons, nNeuronsPerHiddenLayer, nHiddenLayers, nOutputs)
+
+The NeuralNetwork API has been written in both native C++ and JavaScript, and can be compiled against uClibc for use in embedded environments.
+
+This JavaScript implementation is intended to bring the API to browser environments for both deployment and online and offline network training purpose.
+
+-Training intensive tasks can be performed natively for offline training and the network ported for use in the JavaScript runtime.
+
+

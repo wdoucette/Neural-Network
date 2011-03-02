@@ -47,7 +47,6 @@
 }
 #status
 {
-    width: 300px;
     height:18px;
     
 }
@@ -56,19 +55,7 @@
 {
     width: 27px;
 }
-#imgResult0
-{
-    width: 153px;
-}
-#imgResult2
-{
-    width: 149px;
-}
-#imgResult1
-{
-    width: 147px;
-    margin-top: 0px;
-}
+
 #log
 {
     width: 509px;
@@ -78,34 +65,31 @@
 #trainingSets
 {
     height: 134px;
-    width: 330px;
+width:320px;
 }
 
 #wrapper
 {
-    width: 850px;
     height: 550px;
     
-    margin-right: 85px;
     margin-left: 0px;
 }
 #networkConfig
 {
-    
  border: 2px groove;   
- width:300px;   
-    
+ float: left;
+ overflow:scroll;   
 }
 
 #imagePane
 {
-    float: right;
-    width: 388px;
+    float: left;
     background-color: #EEEEEE;
-    margin-left: 113px;
     padding: 10px;
     border: 4px groove;
+    
 }
+
 
 #imagePaneTitle
 {
@@ -113,11 +97,30 @@
     text-align: center;
 }
 
+#networkResults
+{
+    
+    background-color: #EEEEEE;
+    padding:5px; 
+    border:2px groove;
+    }
+
+
+
+#resultsOutput
+{
+    background-color: #EEEEEE;
+    margin-top: 10px;
+    float:right;
+    }
+
+
 #nnCanvas
 {
     border: 2px groove white;
     width: 50px;
     height: 50px;
+float:right;
 }
 
 #nnImg
@@ -126,4 +129,5 @@
     height: 85px;
     width: 220px;
     margin-right: 10px;
+
 }

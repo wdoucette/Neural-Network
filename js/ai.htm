@@ -9,46 +9,66 @@
 </head>
 <body>
     <div id="wrapper">
+        
+        
         <div id="imagePane">
+     
+        <div id="networkResults">
+        <span><b> Network Performance:</b></span>
+         <div id="pKey">
+              <canvas id="nnCanvas" ondblclick="nnToImg(this)" ></canvas>
+                
+                    <input type="button" value="<--Prev" onclick="setCurrentChromosone(-1)" /><input
+                        type="button" value="Next->" onclick="setCurrentChromosone(+1)" />        
+         </div>
+            
+                 <input type="input" id="tbManualTest" />
+        <div> 
+       
+       <span style="text-align:right">
+         <input type="button" id="btnManualTest" onclick="manualTest()" value="Manual Test" />
+      <br />    <input  type="checkbox" onclick="setCurrentChromosone(0,this.checked)" checked="checked" />
+       image 
+            <input  type="checkbox" onclick="toggleLog(0,this.checked)"  />
+       log
+       </span>     
+       
+             </div>
+             
+         
+        </div>
+        <div id="resultsOutput" style="border:4px groove;">
+        <div id="networkResultTitle">
+                </div>
+                <div id="setResult0">
+                </div>
+                <div id="setResult1">
+                </div>
+                <div id="setResult2">
+                </div>
+                <div id="setResult3">
+                </div>
+                <div id="setResult4">
+                </div>
+                <div id="setResult5">
+                </div>
+                <div id="setResult6">
+                </div>
+                <div id="setResult7">
+                </div>
+                
             <span id="imagePaneTitle">Neural Network Visualizer</span><br />
-            <canvas ondblclick="nnToImg(this)" id="nnCanvas"></canvas>
             <br />
             <img id="nnImg" draggable="true" ondragenter="dragEnterHandler(event)" ondragover="dragOverHandler(event)"
                 ondrop="dropHandler(event)" ondragstart="dragStartHandler(event)" />
             <br />
-            
-                <div id="pKey">
-                    <input type="button" value="<--Prev" onclick="setCurrentChromosone(-1)" /><input
-                        type="button" value="Next->" onclick="setCurrentChromosone(+1)" />
-                    Show image
-                    <input type="checkbox" onclick="setCurrentChromosone(0,this.checked)" checked="checked" />
-                </div>
-                 <input type="input" id="tbManualTest" />
-                 <input type="button" id="btnManualTest" onclick="manualTest()" value="Manual Test" />
-       
-                <div id="imgTitle">
-                </div>
-                <div id="imgResult0">
-                </div>
-                <div id="imgResult1">
-                </div>
-                <div id="imgResult2">
-                </div>
-                <div id="imgResult3">
-                </div>
-                <div id="imgResult4">
-                </div>
-                <div id="imgResult5">
-                </div>
-                <div id="imgResult6">
-                </div>
-                <div id="imgResult7">
-                </div>
-                &nbsp;
+            </div>
+                       
         </div><!-- end imagePane-->
         
+        
         <div id="networkConfig">
-            <form action="javascript:main( _UI() )" style="width: 301px">
+            <form action="javascript:main( _UI() )" >
             <span style="display: block;text-align: center; font-weight:bold" >Network Configuration:</span>
             <input id="tbnInputs" onkeyup="" type="text" value="3" />
             Input(s)<br />
@@ -63,10 +83,10 @@
             Neurons per layer<br />
             <input id="tbnOutputs" onkeyup="target = this.value" type="text" value="4" />Outputs(s)<br />
             <br />
-        </div>
-        <div id="status" style="border-style: groove">
-        </div>
-        <br />
+        
+        <div id="status" style="border-style: groove"></div>
+        
+
          Max Epochs:<input type="text" id="tbMaxEpochs" onkeyup="maxEpochs=this.value" value="100000" />
          <br />
         <input type="submit" id="btnTrain" onclick="" value="Train" />
@@ -86,6 +106,8 @@
                 <input type="text" value="-5,5,5" /><input type="text" value="0,1,0,0"/>
                 <input type="text" value="5,-5,-5" /><input type="text" value="1,0,0,0"/>     
             </trainingset>
+        </div>
+
         </div>
     </div>
     <!-- end wrapper -->

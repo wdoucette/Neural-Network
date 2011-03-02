@@ -114,9 +114,10 @@ function setCurrentChromosone(n, navToggle) {
 
     if (setCurrentChromosoneIndex > GA.pool.length - 1) setCurrentChromosoneIndex = 0;
     if (setCurrentChromosoneIndex < 0) setCurrentChromosoneIndex = GA.pool.length - 1;
-
-    document.getElementById('imgTitle').innerHTML = "Chromosone #: " + setCurrentChromosoneIndex + " ";
-    document.getElementById('imgTitle').innerHTML += GA.pool[setCurrentChromosoneIndex].fs; //parseFloat(value).toFixed(2) + " ";
+    
+    // TODO: Encapsulate through UI.
+    document.getElementById('networkResultTitle').innerHTML = "Chromosone #: " + setCurrentChromosoneIndex + "<br />Fitness: ";
+    document.getElementById('networkResultTitle').innerHTML += GA.pool[setCurrentChromosoneIndex].fs; //parseFloat(value).toFixed(2) + " ";
 
     if (count % 500 == 0) {
 
@@ -138,7 +139,7 @@ function setCurrentChromosone(n, navToggle) {
 
         results = NeuralNetwork.update(inputs, GA.pool[setCurrentChromosoneIndex]);
 
-        ele = 'imgResult' + tsKey;
+        ele = 'setResult' + tsKey;
         document.getElementById(ele).innerHTML = "";
 
 

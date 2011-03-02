@@ -1,3 +1,8 @@
+//NeuralNetwork API Copyright 2011 Wayne Doucette, http://wayne-doucette.blogspot.com.
+// All rights reserved.
+//Simplified BSD License Appllies.
+
+
 var UI;
 var weights;
 
@@ -7,7 +12,7 @@ var verbInfo = 5; // Info.
 var verbError = 1; // Errors.
 
 // Neural Network
-var CONSTResponse = 1;
+var CONSTResponse = .5;
 var wordLength = 16;    // 1024 2^n resolution
 
 // Genetic Algorithm
@@ -19,7 +24,7 @@ var includeParents = true;
 
 // Solution paramaters
 var trainingSets = new Array(); 
-var sigFigures = 2; //100K
+var sigFigures = 2;
 
 // Misc
 var startTime;

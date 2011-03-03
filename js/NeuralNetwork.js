@@ -1,6 +1,7 @@
-//NeuralNetwork API Copyright 2011 Wayne Doucette, http://wayne-doucette.blogspot.com.
-// All rights reserved.
-//Simplified BSD License Appllies.
+//  NeuralNetwork API Copyright 2011 Wayne Doucette, http://wayne-doucette.blogspot.com.
+//  All rights reserved.
+//  Simplified BSD License Appllies.
+// https://spreadsheets.google.com/ccc?key=0AvzKco15_YcGdDk2WTFDV1RiSkpTZlRXOHNjSTZMd2c&hl=en
 
 
 var UI;
@@ -12,12 +13,12 @@ var verbInfo = 5; // Info.
 var verbError = 1; // Errors.
 
 // Neural Network
-var CONSTResponse = .5;
-var wordLength = 16;    // 1024 2^n resolution
+var CONSTResponse = .85;
+var wordLength = 10;    // 1024 2^n resolution
 
 // Genetic Algorithm
-var seedSizeN = 5; // Returns 2^(n-1)
-var mutationRate = .1;
+var seedSize = 5; // Returns 2^(n-1)
+var mutationRate = .01;
 var crossoverRate = 1;
 var maxEpochs = 100;
 var includeParents = true; 
@@ -32,6 +33,7 @@ var endTime;
 var ticksTimer;
 var count;
 var gMutations = 0;
+var getGenome;
 
 // Prototypes.
 Array.prototype.forEach = function (fn) {
@@ -65,9 +67,17 @@ Array.prototype.unique = function () {
 
 // Entry point.
 function main(UserInterface) {
-   
+
+    // UI Implements
+    // Methods:
+    // log(msg, lb)
+    // status(msg, color)
+    // Properties:
+    // NeuralNetwork(arguments)
+    // parameters
+
     UI = UserInterface;
-   
+
     var nInputs;
     var nOutputs;
     var nHidden;
@@ -85,7 +95,7 @@ function main(UserInterface) {
 
     }
 
-    // Parse UI Inputs.
+    // Parse UI parameters.
     
     // TODO: UI.validate();
     nInputs = UI.nInputs;
@@ -95,7 +105,7 @@ function main(UserInterface) {
     nOutputs = UI.nOutputs;
 
     maxEpochs = UI.maxEpochs;
-    trainingSets = UI.trainingSets();
+    trainingSets = UI.trainingSets;
 
     // Create a new Neural Network and Genetic Algorithm.
     NeuralNetwork = new NeuralNet(nInputs, nInputNeurons, nHidden, nNeurons, nOutputs);
@@ -104,6 +114,15 @@ function main(UserInterface) {
    
     GA = new GeneticAlgorithm(seed.length);
     GA.initPool(seed, poolSize);
+
+
+    // Initialize exporting.
+    getGenome = function () {
+       
+        return GA.getPool();
+    };
+
+    exportNet();
 
     // Initalize UI outputs
     UI.status("Init.", "lightpink");
@@ -264,6 +283,9 @@ NeuralNet.prototype.getOutput = function (xInputs) {
     var activation = 0;
     var offset = 0;
     var synapses = 0;
+    var delta = 1;
+    var c = 10;
+    var m = -5;
 
     // Recures network layers: input, nHiddenLayers and output to calculate and
     // return the NN's output(s)
@@ -278,7 +300,7 @@ NeuralNet.prototype.getOutput = function (xInputs) {
         // Program neuron's synapses.
         for (j = 0; j < this.nInputs; j++) {
 
-            activation += xInputs[j] * this.getWeight(offset++);
+            activation += (c* xInputs[j] +m) * this.getWeight(offset++);
 
         }
         // Bias conditioned to +/- 5.
@@ -383,7 +405,7 @@ function GeneticAlgorithm(chromosoneLength) {
     // Holds the population.
     this.pool = new Array();
     this.chromosoneLength = chromosoneLength;
-
+    
 }
 
 
@@ -419,7 +441,11 @@ GeneticAlgorithm.prototype.initPool = function (seed, poolSize) {
     this.pool = genePool;
 }
 
+GeneticAlgorithm.prototype.getPool = function () {
 
+    return this.pool[0];
+
+}
 
 GeneticAlgorithm.prototype.epoch = function (genePool) {
 
@@ -624,8 +650,8 @@ GeneticAlgorithm.prototype.train = function () {
         // Each training set.
         trainingSets.forEach(function (tsKey, value) {
 
-            inputs = trainingSets[tsKey][0];
-            targets = trainingSets[tsKey][1];
+            inputs = trainingSets[tsKey].inputs;
+            targets = trainingSets[tsKey].outputs;
 
             var results = NeuralNetwork.update(inputs, pool[pKey]);
 
@@ -633,11 +659,10 @@ GeneticAlgorithm.prototype.train = function () {
             results.forEach(function (index, value) {
 
                 var delta = Math.abs(targets[index] - results[index]);
-                //                if (delta < .5) {
-
+              
+                // LMS 
                 delta *= delta;
-                //              }
-
+              
                 pool[pKey].fs += delta;
 
             });

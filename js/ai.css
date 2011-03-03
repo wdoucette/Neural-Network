@@ -13,8 +13,8 @@
 
 .sets
 {
-    width: 356px;
-    height: 145px;
+    width: 300px;
+    
 }
 #tbnInputs
 {
@@ -39,7 +39,7 @@
 }
 #tbTarget
 {
-    width: 180px;
+    
 }
 #tbEpoch
 {
@@ -62,15 +62,20 @@
     margin-left: 0px;
 }
 
+#trainingSets input
+{
+    
+width:125px;
+margin:5px; 
+    
+}
 #trainingSets
 {
-    height: 134px;
-width:320px;
+    
 }
 
 #wrapper
 {
-    height: 550px;
     
     margin-left: 0px;
 }
@@ -78,7 +83,7 @@ width:320px;
 {
  border: 2px groove;   
  float: left;
- overflow:scroll;   
+  
 }
 
 #imagePane
@@ -120,7 +125,7 @@ width:320px;
     border: 2px groove white;
     width: 50px;
     height: 50px;
-float:right;
+    float:right;
 }
 
 #nnImg

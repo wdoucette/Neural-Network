@@ -9,67 +9,53 @@
 </head>
 <body>
     <div id="wrapper">
-        
-        
-        <div id="imagePane">
-     
-        <div id="networkResults">
-        <span><b> Network Performance:</b></span>
-         <div id="pKey">
-              <canvas id="nnCanvas" ondblclick="nnToImg(this)" ></canvas>
-                
-                    <input type="button" value="<--Prev" onclick="setCurrentChromosone(-1)" /><input
-                        type="button" value="Next->" onclick="setCurrentChromosone(+1)" />        
-         </div>
-            
-                 <input type="input" id="tbManualTest" />
-        <div> 
-       
-       <span style="text-align:right">
-         <input type="button" id="btnManualTest" onclick="manualTest()" value="Manual Test" />
-      <br />    <input  type="checkbox" onclick="setCurrentChromosone(0,this.checked)" checked="checked" />
-       image 
-            <input  type="checkbox" onclick="toggleLog(0,this.checked)"  />
-       log
-       </span>     
-       
-             </div>
-             
-         
-        </div>
-        <div id="resultsOutput" style="border:4px groove;">
-        <div id="networkResultTitle">
-                </div>
-                <div id="setResult0">
-                </div>
-                <div id="setResult1">
-                </div>
-                <div id="setResult2">
-                </div>
-                <div id="setResult3">
-                </div>
-                <div id="setResult4">
-                </div>
-                <div id="setResult5">
-                </div>
-                <div id="setResult6">
-                </div>
-                <div id="setResult7">
-                </div>
-                
-            <span id="imagePaneTitle">Neural Network Visualizer</span><br />
-            <br />
-            <img id="nnImg" draggable="true" ondragenter="dragEnterHandler(event)" ondragover="dragOverHandler(event)"
-                ondrop="dropHandler(event)" ondragstart="dragStartHandler(event)" />
-            <br />
-            </div>
-                       
-        </div><!-- end imagePane-->
-        
-        
         <div id="networkConfig">
-            <form action="javascript:main( _UI() )" >
-            <span style="display: block;text-align: center; font-weight:bold" >Network Configuration:</span>
+            <div id="imagePane">
+                <div id="networkResults">
+                    <span><b>Network Performance:</b></span>
+                    <div id="pKey">
+                        <canvas id="nnCanvas" ondblclick="nnToImg(this)"></canvas>
+                        <input type="button" value="<--Prev" onclick="setCurrentChromosone(-1)" /><input
+                            type="button" value="Next->" onclick="setCurrentChromosone(+1)" />
+                    </div>
+                    <input type="input" id="tbManualTest" />
+                    <div>
+                        <span style="text-align: right">
+                            <input type="button" id="btnManualTest" onclick="manualTest()" value="Manual Test" />
+                            <br />
+                            <input type="checkbox" onclick="setCurrentChromosone(0,this.checked)" checked="checked" />
+                            image
+                            <input type="checkbox" onclick="toggleLog(0,this.checked)" />
+                            log </span>
+                        <div id="status" style="border-style: groove">
+                        </div>
+                        Max Epochs:<input type="text" id="tbMaxEpochs" onkeyup="maxEpochs=this.value" value="100000" />
+                        <br />
+                        <input type="submit" id="btnTrain" onclick="main( _UI() )" value="Train" />
+                        <input type="button" id="btnPause" onclick="pause(this)" value="Pause" />
+                        <input type="button" id="btnEnd" onclick="end()" value="End" /><br />
+                        <a href="javascript: importNet()" >Import</a>
+                        <a id="exportNet" href="#" >Export</a>
+                           <!--   <input type="button" id="btnMode" onclick="random = random ? false : true" value="Mode" />-->
+                    </div>
+                </div>
+                <div id="resultsOutput" style="border: 4px groove;">
+                    
+                    <div id="networkResultTitle">
+                    </div>
+                    <div id="setResults">
+                    </div>
+                    <span id="imagePaneTitle">Neural Network Visualizer</span><br />
+                    <br />
+                    <img id="nnImg" draggable="true" ondragenter="dragEnterHandler(event)" ondragover="dragOverHandler(event)"
+                        ondrop="dropHandler(event)" ondragstart="dragStartHandler(event)" />
+                    <br />
+                </div>
+            </div>
+            <!-- end imagePane-->
+           
+            <form action="javascript:main( _UI() )">
+            <span style="display: block; text-align: center; font-weight: bold">Network Configuration:</span>
             <input id="tbnInputs" onkeyup="" type="text" value="3" />
             Input(s)<br />
             <input id="tbnInputNeurons" onkeyup="" type="text" value="4" />
@@ -83,36 +69,25 @@
             Neurons per layer<br />
             <input id="tbnOutputs" onkeyup="target = this.value" type="text" value="4" />Outputs(s)<br />
             <br />
-        
-        <div id="status" style="border-style: groove"></div>
-        
+            </form>
+           
+            <!--/ TODO: XML -->
+            <div id="trainingSets" class="sets">
+                <a href="javascript:addSet()">Add training set</a><br />
+                <span id="nSets"></span>
+                <br />
+            </div>
 
-         Max Epochs:<input type="text" id="tbMaxEpochs" onkeyup="maxEpochs=this.value" value="100000" />
-         <br />
-        <input type="submit" id="btnTrain" onclick="" value="Train" />
-        <input type="button" id="btnPause" onclick="pause(this)" value="Pause" />
-        <input type="button" id="btnEnd" onclick="end()" value="End" /><br />
-        <!--   <input type="button" id="btnMode" onclick="random = random ? false : true" value="Mode" />-->
-        </form>
-        <div id="trainingSets" class="sets">
-            <a href="javascript:addSet()">Add training set</a><br />
-            <span id="nSets"></span>
-            <br />
-            <!-- TODO: Dynamically populate training sets via addSet() -->
-            <trainingset>
-                <input type="text" value="-5,-5,-5" /><input type="text" value="0,0,0,0"/>
-                <input type="text" value="-5,-5,5" /><input type="text" value="0,0,0,1"/>
-                <input type="text" value="-5,5,-5" /><input type="text" value="0,0,1,0"/>
-                <input type="text" value="-5,5,5" /><input type="text" value="0,1,0,0"/>
-                <input type="text" value="5,-5,-5" /><input type="text" value="1,0,0,0"/>     
-            </trainingset>
-        </div>
-
+                   
         </div>
     </div>
     <!-- end wrapper -->
     <div id='log'>
         <br />
         Log</div>
+    <script type="text/javascript">
+        window.onload = initSets();
+        
+    </script>
 </body>
 </html>

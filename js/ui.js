@@ -1,16 +1,105 @@
 // AI User Interface
-var sets = 0;
+var sets =0;
+var trainingSetsElementId = "trainingsets";
+var setCountElementId = "nSets";
+
+function importNet() { 
+
+
+
+}
+
+function exportNet() {
+
+    var data = "";
+    var html = "";
+    //datauri
+    html = "data:application/xml;charset=utf-8,";
+
+    data = "<xml>";
+    
+    trainingSets.forEach(function (key, value) {
+
+    data += "<trainingSet>";
+    data += trainingSets[key].inputs + ":" + trainingSets[key].outputs;
+    data += "</trainingSet>" + String.fromCharCode(10)  + String.fromCharCode(13);
+    });
+
+    data += "<Chromosone>";
+    data += getGenome();
+    data += "</Chromosone>";
+
+   data += "</xml>";
+
+   html += data; // window.btoa(data);
+   var el = document.getElementById('exportNet');
+   el.setAttribute("href", html);
+  
+
+}
+
+function initSets (){
+
+    
+    var inputs = new Array();
+    var outputs = new Array();
+
+     inputs.push("0,0,0");
+     outputs.push("0,0,0,0");
+
+     inputs.push("0,0,1");
+     outputs.push("0,0,0,1");
+
+     inputs.push("0,1,0");
+     outputs.push("0,0,1,0");
+
+     inputs.push("0,1,1");
+     outputs.push("0,1,0,0");
+
+     inputs.push("1,0,0");
+     outputs.push("1,0,0,0");
+
+     inputs.push("1,0,1");
+     outputs.push("1,0,0,1");
+
+     inputs.push("1,1,0");
+     outputs.push("1,0,1,0");
+
+     inputs.push("1,1,1");
+     outputs.push("1,1,0,0");
+
+
+     inputs.forEach(function (key, value) {
+
+         var trainingSet = {};
+     
+         trainingSet.inputs = inputs[key];
+         trainingSet.outputs = outputs[key];
+     
+         addSet(trainingSet);
+    //     sets++;
+
+     });
+    
+
+//                <input type="text" value="-5,-5,5" /><input type="text" value="0,0,0,1"/>
+//                <input type="text" value="-5,5,-5" /><input type="text" value="0,0,1,0"/>
+//                <input type="text" value="-5,5,5" /><input type="text" value="0,1,0,0"/>
+//                <input type="text" value="5,-5,-5" /><input type="text" value="1,0,0,0"/> 
+
+}
 
 
 function _UI() {
 
-    result = { nInputs: document.getElementById("tbnInputs").value,
+    JSON = { nInputs: document.getElementById("tbnInputs").value,
         nInputNeurons: document.getElementById("tbnInputNeurons").value,
         nHidden: document.getElementById("tbnHiddenLayers").value,
         nNeurons: document.getElementById("tbnNeuronsPerHiddenLayer").value,
         nOutputs: document.getElementById("tbnOutputs").value,
         maxEpochs: document.getElementById("tbMaxEpochs").value,
         nTrainingSets: document.getElementById('nSets').value,
+        trainingSets: parseTrainingSets(trainingSetsElementId),
         status: function (msg, color) {
 
             el = document.getElementById('status');
@@ -37,38 +126,35 @@ function _UI() {
             return;
         },
 
-        trainingSets: function () {
-            var sets = new Array();
-            var results = xPath('//trainingSet/input');
-            var n = 0;
-            for (i = 0; i < (results.snapshotLength); i += 2) {
-
-                sets[n] = new Array();
-                sets[n][0] = results.snapshotItem(i).value.split(',');
-                sets[n][1] = results.snapshotItem(i + 1).value.split(',');
-                n++;
-            }
-            return sets;
-        },
         validate: function () { }
     }
 
 
-    return result;
+    return JSON;
 }
 
 
-// TODO: Dynamically populate training sets.
-function addSet() {
+function addSet(trainingSet) {
 
-    sets++;
-    document.getElementById('nSets').innerHTML = sets;
+    // Dynamically adds an HTML training set.
+  
+  
+    if (typeof trainingSet == 'undefined') {
 
-    var parent = document.getElementById('trainingSets');
+        trainingSet = {};
+        trainingSet.inputs = "";
+        trainingSet.outputs = "";
+    }
+    
+    
+    var parent = document.getElementById("trainingSets");
     var div;
     var inputs;
     var targets;
     var link;
+    var setResult;
+
+    // Append trainingSet.
 
     div = document.createElement("trainingSet");
 
@@ -78,14 +164,26 @@ function addSet() {
     link.appendChild(document.createTextNode(" -"));
 
     inputs = document.createElement("input");
-    inputs.setAttribute("value", "-5,-5");
+    inputs.setAttribute("value", trainingSet.inputs);
     targets = document.createElement("input");
-    targets.setAttribute("value", "0,0,0");
-
+    targets.setAttribute("value", trainingSet.outputs);
+    
     div.appendChild(inputs);
     div.appendChild(targets);
     div.appendChild(link);
     parent.appendChild(div);
+ 
+ /// Append setResult div for this set.
+
+    div = document.getElementById("setResults");
+    
+    setResult = document.createElement("div");
+    setResult.setAttribute("id", "setResult" + sets);
+    div.appendChild(setResult);
+    
+    sets++;
+    document.getElementById(setCountElementId).innerHTML = sets;
+
 }
 
 function remove(set) {
@@ -97,9 +195,13 @@ function remove(set) {
 }
 
 
-var setCurrentChromosoneIndex = 0;
+var iCurrentChromosone = 0;
 var navDisabled = false;
 
+
+
+// TODO: Encapsulate UI
+    
 function setCurrentChromosone(n, navToggle) {
 
     var results;
@@ -110,14 +212,14 @@ function setCurrentChromosone(n, navToggle) {
         navDisabled = (navDisabled) ? false : true;
     }
 
-    setCurrentChromosoneIndex += n;
+    iCurrentChromosone += n;
 
-    if (setCurrentChromosoneIndex > GA.pool.length - 1) setCurrentChromosoneIndex = 0;
-    if (setCurrentChromosoneIndex < 0) setCurrentChromosoneIndex = GA.pool.length - 1;
+    if (iCurrentChromosone > GA.pool.length - 1) iCurrentChromosone = 0;
+    if (iCurrentChromosone < 0) iCurrentChromosone = GA.pool.length - 1;
     
     // TODO: Encapsulate through UI.
-    document.getElementById('networkResultTitle').innerHTML = "Chromosone #: " + setCurrentChromosoneIndex + "<br />Fitness: ";
-    document.getElementById('networkResultTitle').innerHTML += GA.pool[setCurrentChromosoneIndex].fs; //parseFloat(value).toFixed(2) + " ";
+    document.getElementById('networkResultTitle').innerHTML = "Chromosone #: " + iCurrentChromosone + "<br />Fitness: ";
+    document.getElementById('networkResultTitle').innerHTML += GA.pool[iCurrentChromosone].fs; //parseFloat(value).toFixed(2) + " ";
 
     if (count % 500 == 0) {
 
@@ -134,10 +236,10 @@ function setCurrentChromosone(n, navToggle) {
     // Each training set.
     trainingSets.forEach(function (tsKey, value) {
 
-        inputs = trainingSets[tsKey][0];
-        targets = trainingSets[tsKey][1];
+        inputs = trainingSets[tsKey].inputs;
+        targets = trainingSets[tsKey].outputs;
 
-        results = NeuralNetwork.update(inputs, GA.pool[setCurrentChromosoneIndex]);
+        results = NeuralNetwork.update(inputs, GA.pool[iCurrentChromosone]);
 
         ele = 'setResult' + tsKey;
         document.getElementById(ele).innerHTML = "";
@@ -154,6 +256,8 @@ function setCurrentChromosone(n, navToggle) {
 
     });
 
+
+    // TODO: Encapsulate UI
     nnToImg(document.getElementById('nnCanvas'));
 
     if (match.length == targets.length * trainingSets.length) {
@@ -168,6 +272,9 @@ function setCurrentChromosone(n, navToggle) {
     else return false
 }
 
+
+// TODO: Encapsulate UI
+    
 function nnToImg(canvas) {
 
     var ctx = canvas.getContext('2d');
@@ -187,7 +294,7 @@ function nnToImg(canvas) {
     var data;
     var offset;
 
-    data = GA.getBinaryString(setCurrentChromosoneIndex);
+    data = GA.getBinaryString(iCurrentChromosone);
 
 
     offset = 0;
@@ -212,6 +319,44 @@ function nnToImg(canvas) {
     nnImage = document.getElementById('nnImg');
     nnImage.src = canvas.toDataURL();
 }
+
+
+
+// TODO: Encapsulate UI
+    
+function manualTest() {
+
+    var inputs = document.getElementById('tbManualTest').value.split(',');
+    var results = NeuralNetwork.update(inputs, GA.pool[iCurrentChromosone]);
+    var output = "";
+    results.forEach(function (key, value) {
+        output += value.toFixed(0) + " ";
+    });
+    alert(output);
+}
+
+
+function parseTrainingSets(elementName) {
+
+    // Returns objects array of delimited input/output values 
+    // [index]["inputs"][values]  
+    // [index]["outputs"][values]
+    var sets = new Array();
+
+    var results = xPath('//trainingSet/input');
+    var n = 0;
+    for (i = 0; i < (results.snapshotLength); i += 2) {
+
+        sets[n] = new Array();
+        sets[n].inputs = results.snapshotItem(i).value.split(',');
+        sets[n].outputs = results.snapshotItem(i + 1).value.split(',');
+        n++;
+    }
+    return sets;
+}
+
+
+
 
 //XPATH
 
@@ -276,16 +421,3 @@ function dropHandler(event) {
 }
 
 /////////////////////////
-
-function manualTest() {
-
-    var inputs = document.getElementById('tbManualTest').value.split(',');
-    var results = NeuralNetwork.update(inputs, GA.pool[setCurrentChromosoneIndex]);
-    var output = "";
-    results.forEach(function (key, value) {
-        output += value.toFixed(0) + " ";
-    });
-    alert(output);
-}
-
-

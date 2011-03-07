@@ -13,7 +13,7 @@
 
 .sets
 {
-    width: 300px;
+    width: 312px;
     
 }
 #tbnInputs
@@ -58,7 +58,7 @@
 
 #log
 {
-    width: 509px;
+    width: 299px;
     margin-left: 0px;
 }
 
@@ -70,20 +70,22 @@ margin:5px;
     
 }
 #trainingSets
-{
-    
+{    height: 138px;
 }
 
-#wrapper
+#wr_Apper
 {
     
     margin-left: 0px;
 }
 #networkConfig
 {
- border: 2px groove;   
- float: left;
-  
+ border-style: groove;
+    border-color: inherit;
+    border-width: 2px;
+    float: left;
+    width: 290px;
+    margin-right: 0px;
 }
 
 #imagePane
@@ -135,4 +137,12 @@ margin:5px;
     width: 220px;
     margin-right: 10px;
 
+}
+
+#taNetImport
+{
+    
+overflow:scroll;    
+width: 235px;
+    
 }

@@ -2,40 +2,58 @@
 <html>
 <head>
     <title>Neural Network Trainer</title>
-    <script type="text/javascript" src="ui.js" />
-    </script>
-    <script type="text/javascript" src="NeuralNetwork.js"></script>
+    <script type="text/javascript" src="AI.js" ></script>
+    <script type="text/javascript" src="ui.js" ></script>
+    <script type="text/javascript" src="GeneticAlgorithm.js"></script>
+    <script type="text/javascript" src="FeedForward.js"></script>
+    
     <link rel="stylesheet" href="ai.css" />
+    <style type="text/css">
+        #btnImport
+        {
+            height: 20px;
+            width: 65px;
+        }
+    </style>
 </head>
 <body>
-    <div id="wrapper">
+    <div id="wr_Apper">
         <div id="networkConfig">
             <div id="imagePane">
                 <div id="networkResults">
                     <span><b>Network Performance:</b></span>
                     <div id="pKey">
                         <canvas id="nnCanvas" ondblclick="nnToImg(this)"></canvas>
-                        <input type="button" value="<--Prev" onclick="setCurrentChromosone(-1)" /><input
-                            type="button" value="Next->" onclick="setCurrentChromosone(+1)" />
+                        <input type="button" value="<--Prev" onclick="evaluateChromosone(-1)" /><input
+                            type="button" value="Next->" onclick="evaluateChromosone(+1)" />
                     </div>
                     <input type="input" id="tbManualTest" />
                     <div>
                         <span style="text-align: right">
                             <input type="button" id="btnManualTest" onclick="manualTest()" value="Manual Test" />
                             <br />
-                            <input type="checkbox" onclick="setCurrentChromosone(0,this.checked)" checked="checked" />
+                            <input type="checkbox" onclick="evaluateChromosone(0,this.checked)" checked="checked" />
                             image
                             <input type="checkbox" onclick="toggleLog(0,this.checked)" />
                             log </span>
                         <div id="status" style="border-style: groove">
                         </div>
                         Max Epochs:<input type="text" id="tbMaxEpochs" onkeyup="maxEpochs=this.value" value="100000" />
+                        <input type="hidden" id="tbEpoch" />
                         <br />
-                        <input type="submit" id="btnTrain" onclick="main( _UI() )" value="Train" />
-                        <input type="button" id="btnPause" onclick="pause(this)" value="Pause" />
+                        <input type="submit" id="btnTrain" onclick=" __App.setUI(Interface());__App.main( true )" value="Train" />
+                        <input type="button" id="btnPause" onclick="__App.pause()" value="Pause" />
                         <input type="button" id="btnEnd" onclick="end()" value="End" /><br />
-                        <a href="javascript: importNet()" >Import</a>
-                        <a id="exportNet" href="#" >Export</a>
+                        <textarea id="taNetImport" ondblclick="_UI.importNetwork(this.value)" rows="6" ></textarea>
+                        <br />
+                       
+                        <input type="button" id="btnImport" onclick="_UI.importNetwork(document.getElementById('taNetImport').value)" value="Open" /><br />Name: <input type="text" id="tbNetName" value="" />
+                        <input type="button" id="btnExport" onclick="_UI.initNetExport(); " value="Save" /><br />
+                        <select id="sbSavedNetworks" title="Saved Networks" size="1" style="width:175px" onkeyup="_UI.restoreSavedNetwork(this.value)" onchange="_UI.restoreSavedNetwork(this.value)"></select>
+                        <input type="button" id="btnDelete" onclick="_UI.removeStorageKey(document.getElementById('sbSavedNetworks').value);" value="Delete" /><br />
+                       <input type="button" id="btnClearStorage" onclick="localStorage.clear();" value="Clear Storage" /><br />
+                       
+                        <a id="exportNet" onclick="" title="Click to view xml, right-click to save link as." href="#" ></a>
                            <!--   <input type="button" id="btnMode" onclick="random = random ? false : true" value="Mode" />-->
                     </div>
                 </div>
@@ -54,7 +72,7 @@
             </div>
             <!-- end imagePane-->
            
-            <form action="javascript:main( _UI() )">
+            <form action="javascript: __App.main(true)">
             <span style="display: block; text-align: center; font-weight: bold">Network Configuration:</span>
             <input id="tbnInputs" onkeyup="" type="text" value="3" />
             Input(s)<br />
@@ -68,26 +86,37 @@
             <input type="text" id="tbnNeuronsPerHiddenLayer" onkeyup="" value="0" />
             Neurons per layer<br />
             <input id="tbnOutputs" onkeyup="target = this.value" type="text" value="4" />Outputs(s)<br />
+            <input id="tbChromosone" type="hidden" />           
             <br />
             </form>
            
             <!--/ TODO: XML -->
+             <span id="nSets"></span>
+             <a href="javascript:_UI.addSet();">Add training set</a><br />
             <div id="trainingSets" class="sets">
-                <a href="javascript:addSet()">Add training set</a><br />
-                <span id="nSets"></span>
                 <br />
+            <trainingset></trainingset>
             </div>
 
                    
         </div>
-    </div>
-    <!-- end wrapper -->
-    <div id='log'>
+    <div id="log">
         <br />
         Log</div>
+    
+    <!-- end wr_Apper -->
+   
+    </div>
+    
     <script type="text/javascript">
-        window.onload = initSets();
-        
+        window.onload = function () {
+
+            //Initialize 
+
+            _UI.initUI();
+            __App = new _App(_UI.Interface());
+          
+        }        
     </script>
 </body>
 </html>

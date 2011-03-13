@@ -1,130 +1,34 @@
 
 
-var _UI = (function () {
+InterfaceLibrary = function () {
 
     // AI User Interface
     // View | Events | Local storage
-
-    //
-    var sets = 0;
-    var trainingSetsElementId = "trainingsets";
+    this.objName = 'Network';
+    
+    this.sets = 0;
     var setCountElementId = "nSets";
     this.trainingSets = new Array();
+    
+    // Declare UI elements:
 
-    this.Interface = function () {
-
-        // Object representing the UI for controller interface. 
-        //json interface.
-        // Implements
-        // Methods:
-        // log(msg, lb)
-        // status(msg, color)
-        // Properties:
-        // NeuralNetwork(arguments)
-        // parameters
-
-        var Obj = { nInputs: document.getElementById("tbnInputs").value,
-            nInputNeurons: document.getElementById("tbnInputNeurons").value,
-            nHidden: document.getElementById("tbnHiddenLayers").value,
-            nNeurons: document.getElementById("tbnNeuronsPerHiddenLayer").value,
-            nOutputs: document.getElementById("tbnOutputs").value,
-            chromosone: document.getElementById("tbChromosone").value,
-            epoch: document.getElementById("tbEpoch").value,
-            maxEpochs: document.getElementById("tbMaxEpochs").value,
-            nTrainingSets: document.getElementById('nSets').value,
-            trainingSets: parseTrainingSets(trainingSetsElementId),
-            status: function (msg, color) {
-
-                el = document.getElementById('status');
-                el.style.backgroundColor = color;
-                el.innerHTML = msg;
-                return;
-            },
-            log: function (msg, lb) {
-                log(msg, lb);
-            },
-
-            validate: function () { }
-        }
-
-        return Obj;
-    }
-
-    this.initUI = function () {
-
-        // Register UI.
-       
-        // Some browsers (FF) cache this across page loads. 
-        document.getElementById('tbChromosone').value = "";
-
-        // Check for local storage support.
-        if (initLocalStorage() == 0) {
-
-            populateSelectBox(); // getNetworkStore();
-        }
-
-        // Populate training sets
-        initSets();
-
-    }
-
-
-    this.log = function (msg, lb) {
-
-        el = document.getElementById('log');
-
-        if (typeof msg == 'undefined') {
-
-            el.innerHTML = ""
-            return;
-        }
-
-        if (!lb) {
-
-            el.innerHTML += msg + "<br />";
-        }
-        else el.innerHTML += msg;
-
-        return;
-    }
+    //this.tbnInputs = document.getElementById("tbnInputs");
 
 
 
-    this.removeStorageKey = function (value) {
-
-        var nnIndex = getNetIndex();
-
-        // Replaces storage index
-        var json = "{'timestamp':["
-
-        for (var i = 0; i < nnIndex.timestamp.length; i++) {
-
-            if (nnIndex.timestamp[i] != value) {
-                json += nnIndex.timestamp[i];
-                if (i < nnIndex.timestamp.length - 1) json += ",";
-            }
-        }
-
-        json += "]}";
-
-        // Store network object.
-        localStorage.setItem('NeuralNetworkIndex', json);
-        localStorage.removeItem(value);
-
-        populateSelectBox();
-
-    }
 
 
-    this.initNetExport = function () {
+this.initNetExport = function (print, save) {
 
         // Snapshots current network encoding in JSON, encapsulating in DataURI XML.
         var data = "";
         var html = "";
 
-        var result = __App.exportNetwork();
+        var result = this.Network.exportNetwork();
 
         var net = result.network;
+        var response = result.response;
+        var weightFactor = result.weightFactor;
         var ver = result.version;
         var fs = result.fs;
 
@@ -133,13 +37,21 @@ var _UI = (function () {
         var chromosone = result.chromosone;
         var epoch = result.epoch;
 
-        var dataURI = "data:_Application/xml;charset=utf-8,";
+        var dataURI = "data:myApplication/xml;charset=utf-8,";
 
         // Build json string representation of network. Wrap in xml tags for viewing.
         data = "<xml>{'Version':'";
         data += ver + "',";
         data += "'arguments':'";
         data += net;
+        data += "',";
+
+        data += "'response':'";
+        data += response;
+        data += "',";
+
+        data += "'weightFactor':'";
+        data += weightFactor;
         data += "',";
 
 
@@ -172,12 +84,123 @@ var _UI = (function () {
         el.setAttribute("href", dataURI + data);
         el.innerHTML = document.getElementById('tbNetName').value;
 
-        document.getElementById('taNetImport').value = data.slice(5, data.length - 6);
-        saveNetwork(data);
+        if (save) this.saveNetwork(data);
+        if (print) this.printNetwork(data);
+
+        return (data);
     }
 
 
 
+
+
+
+
+
+
+
+
+
+}
+
+InterfaceLibrary.prototype.initInterface = function(obj){
+
+   this.Interface = obj;
+
+}
+
+InterfaceLibrary.prototype.registerNetwork = function (obj) {
+
+   this.Network = obj;
+
+}
+
+InterfaceLibrary.prototype.attachEvents = function (obj) {
+
+    var objName = this.objName; 
+    // Bind UI events
+    element = document.getElementById('taNetImport');
+    element.ondblclick = 'myApp.Interface.importNetwork(element.value)';
+
+    element = document.getElementById('btnTrain');
+
+    var str = 'function(){' + objName + '.resume(true);}';
+    element.onclick = function(){obj.resume(true)};// //eval('(' + str + ')'); // function () { Network.resume(true) }; // '';
+
+}
+
+
+    InterfaceLibrary.prototype.initUI = function () {
+
+        // Register UI.
+
+        // Some browsers (FF) cache this across page loads. 
+        document.getElementById('tbChromosone').value = "";
+
+        // Check for local storage support.
+        if (this.initLocalStorage() == 0) {
+
+            this.populateSelectBox(); // getNetworkStore();
+        }
+
+        // Populate training sets
+        this.initSets();
+
+    }
+
+
+    InterfaceLibrary.prototype.log = function (msg, lb) {
+
+        el = document.getElementById('log');
+
+        if (typeof msg == 'undefined') {
+
+            el.innerHTML = ""
+            return;
+        }
+
+        if (!lb) {
+
+            el.innerHTML += msg + "<br />";
+        }
+        else el.innerHTML += msg;
+
+        return;
+    }
+
+
+    InterfaceLibrary.prototype.removeStorageKey = function (value) {
+
+        var nnIndex = getNetIndex();
+
+        // Replaces storage index
+        var json = "{'timestamp':["
+
+        for (var i = 0; i < nnIndex.timestamp.length; i++) {
+
+            if (nnIndex.timestamp[i] != value) {
+                json += nnIndex.timestamp[i];
+                if (i < nnIndex.timestamp.length - 1) json += ",";
+            }
+        }
+
+        json += "]}";
+
+        // Store network object.
+        localStorage.setItem('NeuralNetworkIndex', json);
+        localStorage.removeItem(value);
+
+        populateSelectBox();
+
+    }
+
+
+
+    InterfaceLibrary.prototype.printNetwork = function (data) {
+
+        document.getElementById('taNetImport').value = data.slice(5, data.length - 6);
+
+    }
 
 
     //    this.importNet = function (str) {
@@ -191,7 +214,8 @@ var _UI = (function () {
     //    }
 
 
-    function initSets() {
+
+    InterfaceLibrary.prototype.initSets = function() {
 
         var inputs = new Array();
         var outputs = new Array();
@@ -239,17 +263,17 @@ var _UI = (function () {
         //    inputs.push("1,1,1");
         //    outputs.push("1,1,0,0");
 
-        inputs.forEach(function (key, value) {
+        inputs.forEach(function (key, value, obj) {
 
             var trainingSet = {};
 
             trainingSet.inputs = inputs[key];
             trainingSet.outputs = outputs[key];
 
-            addSet(trainingSet);
+            obj.addSet(trainingSet);
             //     sets++;
 
-        });
+        }, this);
 
 
         //                <input type="text" value="-5,-5,5" /><input type="text" value="0,0,0,1"/>
@@ -264,56 +288,8 @@ var _UI = (function () {
 
 
 
-    this.addSet = function (trainingSet) {
 
-        // Dynamically adds a training set to the DOM.
-        if (typeof trainingSet == 'undefined') {
-
-            trainingSet = {};
-            trainingSet.inputs = "";
-            trainingSet.outputs = "";
-        }
-
-
-        var parent = document.getElementById("trainingSets");
-        var div;
-        var inputs;
-        var targets;
-        var link;
-        var setResult;
-
-        // _Append trainingSet.
-
-        div = document.createElement("trainingSet");
-
-        link = document.createElement("span");
-        link.setAttribute("onclick", "javascript: _UI.removeSet(this)");
-        link.setAttribute("class", "link");
-        link.appendChild(document.createTextNode(" -"));
-
-        inputs = document.createElement("input");
-        inputs.setAttribute("value", trainingSet.inputs);
-        targets = document.createElement("input");
-        targets.setAttribute("value", trainingSet.outputs);
-
-        div.appendChild(inputs);
-        div.appendChild(targets);
-        div.appendChild(link);
-        parent.appendChild(div);
-
-        /// _Append setResult div for this set.
-        div = document.getElementById("setResults");
-
-        setResult = document.createElement("div");
-        setResult.setAttribute("id", "setResult" + sets);
-        div.appendChild(setResult);
-
-        sets++;
-        document.getElementById(setCountElementId).innerHTML = sets;
-
-    }
-
-    this.removeSet = function (set) {
+        InterfaceLibrary.prototype.removeSet = function (set) {
 
         document.getElementById("trainingSets").removeChild(set.parentNode);
         sets--;
@@ -321,7 +297,9 @@ var _UI = (function () {
 
     }
 
-    this.removeAllSets = function () {
+
+
+    InterfaceLibrary.prototype.removeAllSets = function () {
 
         // Remove sets.
         document.getElementById("trainingSets").innerHTML = ""; //removeChild(set.parentNode);
@@ -329,14 +307,14 @@ var _UI = (function () {
         // Clear analysis area.
         document.getElementById("setResults").innerHTML = ""; //removeChild(set.parentNode);
 
-        sets = 0;
+        this.sets = 0;
 
     }
 
 
 
 
-    this.nnToImg = function (canvas) {
+    InterfaceLibrary.prototype.nnToImg = function (canvas) {
         return;
         try {
             if (typeof canvas.getContext == 'undefined') {
@@ -400,7 +378,7 @@ var _UI = (function () {
     }
 
 
-    function manualTest() {
+    InterfaceLibrary.prototype.manualTest = function () {
 
         var inputs = document.getElementById('tbManualTest').value.split(',');
         var results = NeuralNetwork.update(inputs, GA.pool[iCurrentChromosone]);
@@ -412,7 +390,7 @@ var _UI = (function () {
     }
 
 
-    function parseTrainingSets(elementName) {
+    InterfaceLibrary.prototype.parseTrainingSets = function () {
 
         // Returns objects array of delimited input/output values 
         // [index]["inputs"][values]  
@@ -420,7 +398,7 @@ var _UI = (function () {
         var sets = new Array();
 
         // Get dynamically/manually generated training sets.
-        var results = xPath('//trainingSet/input');
+        var results = this.xPath('//trainingSet/input');
 
         var n = 0;
         for (i = 0; i < (results.snapshotLength); i += 2) {
@@ -434,7 +412,7 @@ var _UI = (function () {
     }
 
 
-    function populateSelectBox() {
+    InterfaceLibrary.prototype.populateSelectBox = function () {
 
 
         // Clear options
@@ -442,13 +420,13 @@ var _UI = (function () {
         sbSaved.innerHTML = "";
 
         // Populate saved network select box.
-        var nnIndex = getNetIndex();
-        log("Saved Networks:");
+        var nnIndex = this.getNetIndex();
+        this.log("Saved Networks:");
 
         for (var i = 0; i < nnIndex.timestamp.length; i++) {
 
             log(nnIndex.timestamp[i]);
-            var net = getStoredNet(nnIndex.timestamp[i]);
+            var net = this.getStoredNet(nnIndex.timestamp[i]);
             if (typeof net == 'undefined') {
 
                 removeStorageKey(i);
@@ -496,8 +474,8 @@ var _UI = (function () {
         //var li = document.createElement('li');
         var data = event.dataTransfer.getData("Files"); //internalDNDType);
         alert(data);
-        if (data == 'fruit-_Apple') {
-            li.textContent = '_Apples';
+        if (data == 'fruit-myApple') {
+            li.textContent = 'myApples';
         } else if (data == 'fruit-orange') {
             li.textContent = 'Oranges';
         } else if (data == 'fruit-pear') {
@@ -513,7 +491,7 @@ var _UI = (function () {
 
     /// CLIENT SIDE STORAGE
 
-    function initLocalStorage() {
+    InterfaceLibrary.prototype.initLocalStorage = function() {
 
         if (typeof window.localStorage == 'undefined') {
             status('No local storage support. Upgrade your browser.');
@@ -531,7 +509,7 @@ var _UI = (function () {
         return 0;
     }
 
-    function saveNetwork(xml) {
+   InterfaceLibrary.prototype.saveNetwork = function(xml) {
 
         var result;
         var timestamp = new Date().getTime();
@@ -545,7 +523,7 @@ var _UI = (function () {
     }
 
 
-    function updateStorageIndex(timestamp) {
+    InterfaceLibrary.prototype.updateStorageIndex = function (timestamp) {
 
         var obj = getNetIndex();
         obj.timestamp.push(timestamp);
@@ -566,7 +544,7 @@ var _UI = (function () {
 
 
 
-    function getStoredNet(timestamp) {
+    InterfaceLibrary.prototype.getStoredNet = function (timestamp) {
 
         // Fetch each stored nn timestamp and populate associated names
         var xml = localStorage.getItem(timestamp);
@@ -590,7 +568,7 @@ var _UI = (function () {
         return net;
     }
 
-    function getNetIndex() {
+    InterfaceLibrary.prototype.getNetIndex = function() {
 
         var retval = eval('(' + localStorage.getItem('NeuralNetworkIndex') + ')');
         return retval;
@@ -598,58 +576,24 @@ var _UI = (function () {
 
 
 
-    this.restoreSavedNetwork = function (timestamp) {
+    InterfaceLibrary.prototype.restoreSavedNetwork = function (timestamp) {
 
 
         // TODO: Save current net.
-        var net = getStoredNet(timestamp);
-        parseNetwork(net);
-
-    }
-
-    this.parseNetwork = function (net) {
-
-        var args = net.arguments.split(',');
-        var chromosone = net.Chromosone;
-        var epoch = net.epoch;
-
-        var name = net.Name;
-
-        var version = net.Version;
-
-        document.getElementById('tbnInputs').value = args[0];
-        document.getElementById('tbnInputNeurons').value = args[1];
-        document.getElementById('tbnNeuronsPerHiddenLayer').value = args[2];
-        document.getElementById('tbnHiddenLayers').value = args[3];
-        document.getElementById('tbnOutputs').value = args[4];
-
-        document.getElementById('tbChromosone').value = chromosone;
-        document.getElementById('tbNetName').value = name;
-        //maxEpochs: document.getElementById("tbMaxEpochs").value,
-
-        removeAllSets();
-
-        // Add all stored sets.
-        var i = 0;
-
-        while (net['trainingSet' + i]) {
-
-            var data = net['trainingSet' + i].split(':');
-
-            var trainingset = {};
-            trainingset.inputs = data[0];
-            trainingset.outputs = data[1];
-
-            addSet(trainingset);
-            i++;
-        }
+        var net = this.getStoredNet(timestamp);
+        this.parseNetwork(net);
 
         // Load net.
-        __App.main();
+        
+        this.Network.resume();
+
+        // Print network.
+        this.initNetExport(true, false);
 
     }
 
-    this.importNetwork = function (data) {
+
+    InterfaceLibrary.prototype.importNetwork = function (data) {
 
 
         var json;
@@ -680,9 +624,56 @@ var _UI = (function () {
             log(e + " " + " Network import invalid.");
         }
 
-        parseNetwork(net);
+        this.parseNetwork(net);
 
     }
+
+   InterfaceLibrary.prototype.parseNetwork = function (net) {
+
+        // TODO: validate/trap.
+        var args = net.arguments.split(',');
+        var chromosone = net.Chromosone;
+        var response = net.response;
+        var weightFactor = net.weightFactor;
+
+        var epoch = net.epoch;
+
+        var name = net.Name;
+
+        var version = net.Version;
+
+        this.Interface.nInputs(args[0]); // document.getElementById('tbnInputs').value = args[0];
+        this.Interface.nInputNeurons(args[1]);
+        this.Interface.nNeurons(args[2]);
+        this.Interface.nHidden(args[3]);
+        this.Interface.nOutputs(args[4]);
+
+        this.Interface.chromosone(chromosone);
+        this.Interface.netName(name);
+
+        this.Interface.response(response);
+        this.Interface.weightFactor(weightFactor);
+
+        this.removeAllSets();
+
+        // Add all stored sets.
+        var i = 0;
+
+        while (net['trainingSet' + i]) {
+
+            var data = net['trainingSet' + i].split(':');
+
+            var trainingset = {};
+            trainingset.inputs = data[0];
+            trainingset.outputs = data[1];
+
+            this.addSet(trainingset);
+            i++;
+        }
+
+
+    }
+
 
     function dbInit() {
 
@@ -713,7 +704,7 @@ var _UI = (function () {
     //})();
 
 
-    function xmlParser(xmlString) {
+InterfaceLibrary.prototype.xmlParser = function(xmlString) {
 
         if (window.DOMParser) {
             parser = new DOMParser();
@@ -730,7 +721,7 @@ var _UI = (function () {
 
 
     //XPATH
-    function xPath(query) {
+    InterfaceLibrary.prototype.xPath = function(query) {
 
         var result;
 
@@ -764,8 +755,59 @@ var _UI = (function () {
 
     }
 
-    return this;
+//    this.initUI();
 
-})();
+    //return this;
 
+
+
+
+InterfaceLibrary.prototype.addSet = function (trainingSet) {
+
+    // Dynamically adds a training set to the DOM.
+    if (typeof trainingSet == 'undefined') {
+
+        trainingSet = {};
+        trainingSet.inputs = "";
+        trainingSet.outputs = "";
+    }
+
+
+    var parent = document.getElementById("trainingSets");
+    var div;
+    var inputs;
+    var targets;
+    var link;
+    var setResult;
+
+    // myAppend trainingSet.
+
+    div = document.createElement("trainingSet");
+
+    link = document.createElement("span");
+    link.setAttribute("onclick", "javascript: _UI.removeSet(this)");
+    link.setAttribute("class", "link");
+    link.appendChild(document.createTextNode(" -"));
+
+    inputs = document.createElement("input");
+    inputs.setAttribute("value", trainingSet.inputs);
+    targets = document.createElement("input");
+    targets.setAttribute("value", trainingSet.outputs);
+
+    div.appendChild(inputs);
+    div.appendChild(targets);
+    div.appendChild(link);
+    parent.appendChild(div);
+
+    /// myAppend setResult div for this set.
+    div = document.getElementById("setResults");
+
+    setResult = document.createElement("div");
+    setResult.setAttribute("id", "setResult" + this.sets);
+    div.appendChild(setResult);
+
+    this.sets++;
+    //this.setCount(this.sets);
+
+}
 

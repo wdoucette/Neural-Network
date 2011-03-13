@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html >
+﻿<!DOCTYP E html >
 <html>
 <head>
     <title>Neural Network Trainer</title>
@@ -17,7 +17,7 @@
     </style>
 </head>
 <body>
-    <div id="wr_Apper">
+    <div id="wrapper">
         <div id="networkConfig">
             <div id="imagePane">
                 <div id="networkResults">
@@ -41,21 +41,26 @@
                         Max Epochs:<input type="text" id="tbMaxEpochs" onkeyup="maxEpochs=this.value" value="100000" />
                         <input type="hidden" id="tbEpoch" />
                         <br />
-                        <input type="submit" id="btnTrain" onclick=" __App.setUI(Interface());__App.main( true )" value="Train" />
-                        <input type="button" id="btnPause" onclick="__App.pause()" value="Pause" />
+                        <input type="submit" id="btnTrain" value="Train" />
+                        <input type="button" id="btnPause" onclick="Network.pause()" value="Pause" />
                         <input type="button" id="btnEnd" onclick="end()" value="End" /><br />
-                        <textarea id="taNetImport" ondblclick="_UI.importNetwork(this.value)" rows="6" ></textarea>
+                        <textarea id="taNetImport"  rows="6" ></textarea>
                         <br />
                        
                         <input type="button" id="btnImport" onclick="_UI.importNetwork(document.getElementById('taNetImport').value)" value="Open" /><br />Name: <input type="text" id="tbNetName" value="" />
-                        <input type="button" id="btnExport" onclick="_UI.initNetExport(); " value="Save" /><br />
-                        <select id="sbSavedNetworks" title="Saved Networks" size="1" style="width:175px" onkeyup="_UI.restoreSavedNetwork(this.value)" onchange="_UI.restoreSavedNetwork(this.value)"></select>
+                        <input type="button" id="btnExport" onclick="Network.Lib.initNetExport(true, true); " value="Save" /><br />
+                        <select id="sbSavedNetworks" title="Saved Networks" size="1" style="width:175px" onkeyup="myApp.UI.restoreSavedNetwork(this.value)" onchange="_UI.restoreSavedNetwork(this.value)"></select>
                         <input type="button" id="btnDelete" onclick="_UI.removeStorageKey(document.getElementById('sbSavedNetworks').value);" value="Delete" /><br />
                        <input type="button" id="btnClearStorage" onclick="localStorage.clear();" value="Clear Storage" /><br />
                        
                         <a id="exportNet" onclick="" title="Click to view xml, right-click to save link as." href="#" ></a>
                            <!--   <input type="button" id="btnMode" onclick="random = random ? false : true" value="Mode" />-->
                     </div>
+                    <div id="configOptions">
+                    
+                        Options: 
+                        r<input id="tbResponse" onblur="NN.setResponse(this.value);" type="text" style="width: 21px" /> bits Sigfigs</div>
+                        weight factor<input id="tbWeightFactor" onblur="NN.setWeightFactor(this.value);" type="text" style="width: 21px" /> bits Sigfigs</div>
                 </div>
                 <div id="resultsOutput" style="border: 4px groove;">
                     
@@ -72,7 +77,7 @@
             </div>
             <!-- end imagePane-->
            
-            <form action="javascript: __App.main(true)">
+            <form action="javascript: _NN.main(true)">
             <span style="display: block; text-align: center; font-weight: bold">Network Configuration:</span>
             <input id="tbnInputs" onkeyup="" type="text" value="3" />
             Input(s)<br />
@@ -97,25 +102,76 @@
                 <br />
             <trainingset></trainingset>
             </div>
-
+<span style="display:block;background:blue; border: 1px solid black; font-weight: bold;color: lightgray">LOG</span><div id="log">
+    </div>
                    
         </div>
-    <div id="log">
-        <br />
-        Log</div>
     
-    <!-- end wr_Apper -->
+    <!-- end wrapper -->
    
     </div>
     
     <script type="text/javascript">
+
+
+        function autoEval() {
+
+            // Get inputs
+            var args = [];
+            args[0] = {};
+
+            // Current input state.
+            args[0].inputs = [.3, .1, .4];
+
+            // Desired output state.
+            args[0].outputs = [.5, .5, .5, .5];
+            
+            // Auto Evauate inputs.
+            myAI.AutoEvaluate(args, rank);
+
+        }
+
+        function rank(results) {
+
+            results.forEach(function (key, value) {
+
+                alert(value);
+
+            });
+
+            // Repeat if not finished.
+            myAI.Evolve();
+
+            setTimeout(autoEval, 1);
+            // else
+            // export network.
+        }
+
+        function manualEval() {
+
+            // OR manual assessment.
+
+            // loop...       
+            // eval
+            // myAI.setChromosoneFitness(fs);
+            // myAI.nextChromosone(); //autoevolve
+           
+        
+        
+        }
+
+
         window.onload = function () {
 
-            //Initialize 
-
-            _UI.initUI();
-            __App = new _App(_UI.Interface());
-          
+            // Build new network.
+           // var args = [3, 4, 1, 4, 4];
+            // o o o o
+            // h h h h
+            // n n n n 
+            // [] [] []
+            // myAI = new AI(args);
+            // autoEval();
+            myAI = new AI();
         }        
     </script>
 </body>

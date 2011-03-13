@@ -12,15 +12,15 @@ function FeedForward(nInputs, nInputNeurons, nHiddenLayers, nNeuronsPerHiddenLay
    
     this.count = 0;
 
-    this.startTime;// = new Date();
+    this.startTime = new Date();
     this.endTime;
 
+    this.wordLength = 10;    // 1024 2^n resolution
     var poolSize = 5;
     
     this.CONSTResponse = .85;
-    this.wordLength = 10;    // 1024 2^n resolution
+    this.weightFactor = 1 / 100;
     this.gMutations = 0;
-
  
     this.neurons = 0;
     this.synapses = 0;
@@ -31,6 +31,19 @@ function FeedForward(nInputs, nInputNeurons, nHiddenLayers, nNeuronsPerHiddenLay
     this.nOutputs = parseInt(arguments[4]);
    
     this.weights = new Array();
+
+
+
+
+
+    this.randomClamped = function () {
+
+        // Returns a random wordLength number, E.g., 10 bit = 0~1023.
+
+        return Math.floor(getRandom(0, 1) * Math.pow(2, this.wordLength));
+
+    }
+
 
  
     // Define NeuralNetwork Layers:
@@ -45,25 +58,75 @@ function FeedForward(nInputs, nInputNeurons, nHiddenLayers, nNeuronsPerHiddenLay
     this.neuronLayer(this.nOutputs, (this.nNeuronsPerHiddenLayer == 0) ? this.nInputNeurons : this.nNeuronsPerHiddenLayer);
 
 
+
+
+    this.update = function (inputs, newWeights) {
+
+        // TODO trap params.
+        if (typeof inputs == "object" && inputs.length != this.nInputs) {
+
+            throw ("input length descreptancy in FeedForward.prototype.update.");
+            return -1;
+        }
+        else if (typeof inputs == "string" && inputs != nInputs) {
+
+            throw ("input length descreptancy in FeedForward.prototype.update.");
+            return -1;
+        }
+
+        //if (typeof newWeights != "object" || newWeights.length != this.weights.length) throw ("weight length descreptancy in FeedForward.prototype.update.");
+
+        // Load new weights.
+        if(typeof newWeights != 'undefined') this.weights = newWeights;
+
+        return this.getOutput(inputs);
+    }
+
+
+
+    this.snapshot = function () {
+
+        var args = new Array();
+
+        args.push(this.nInputs);
+        args.push(this.nInputNeurons);
+        args.push(this.nNeuronsPerHiddenLayer);
+        args.push(this.nHiddenLayers);
+        args.push(this.nOutputs);
+
+
+        return args;
+
+    }
+
+
+
+    this.getWeights = function () {
+
+        return this.weights;
+    }
+
+
     
 
     function privateMember() { }
 
+    return this;
 }
 
-FeedForward.prototype.snapshot = function () {
+FeedForward.prototype.setWeightFactor = function (value) {
 
-    var args = new Array();
-    args.push(this.nInputs);
-    args.push(this.nInputNeurons);
-    args.push(this.nHiddenLayers);
-    args.push(this.nNeuronsPerHiddenLayer);
-    args.push(this.nOutputs);
-
-
-    return args;   
+    this.weightFactor = value;
 
 }
+
+
+FeedForward.prototype.setResponse = function (value) {
+
+    this.CONSTResponse = value;
+
+}
+
 
 
 FeedForward.prototype.setWeights = function (value) {
@@ -80,38 +143,12 @@ FeedForward.prototype.setWeights = function (value) {
 
 }
 
-FeedForward.prototype.update = function (inputs, newWeights) {
-
-    // TODO trap params.
-    if (typeof inputs == "object" && inputs.length != this.nInputs) {
-
-        throw ("input length descreptancy in FeedForward.prototype.update.");
-        return -1;
-    }
-    else if (typeof inputs == "string" && inputs != nInputs) {
-
-        throw ("input length descreptancy in FeedForward.prototype.update.");
-        return -1;
-    }
-
-    //if (typeof newWeights != "object" || newWeights.length != this.weights.length) throw ("weight length descreptancy in FeedForward.prototype.update.");
-
-    // Load new weights.
-    this.weights = newWeights;
-
-    return this.getOutput(inputs);
-}
-
-FeedForward.prototype.getWeights = function () {
-
-    return this.weights;
-}
 
 
 FeedForward.prototype.getWeight = function (synapse) {
 
     // Returns an individual synapse's weight.
-    var retval = ((this.weights[synapse] - (Math.pow(2, this.wordLength) * .5)) * .01);
+    var retval = ((this.weights[synapse] - (Math.pow(2, this.wordLength) * .5)) * this.weightFactor);
 
     return retval;
 }
@@ -138,7 +175,7 @@ FeedForward.prototype.neuron = function (nInputs) {
         this.synapses++;
        
         // Set up weights with an initial random value.
-        this.weights.push(randomClamped());
+        this.weights.push(this.randomClamped());
     
     }
 
@@ -166,8 +203,8 @@ FeedForward.prototype.getOutput = function (xInputs) {
     var y2Max = 5;
 
     // Resulting slope and offset.
-    var c = ((y1Max - y1Min) * .5) / ((y2Max - y2Min) * .5);
-    var m = y1Min - y2Min;
+    var m = ((y1Max - y1Min) * .5) / ((y2Max - y2Min) * .5);
+    var c = y1Min - y2Min;
 
     var outputType = "Binary";
 
@@ -184,12 +221,12 @@ FeedForward.prototype.getOutput = function (xInputs) {
         // Program neuron's synapses.
         for (j = 0; j < this.nInputs; j++) {
 
-            activation += (c * xInputs[j] + m) * this.getWeight(offset++);
+            activation += (m * xInputs[j] + c) * this.getWeight(offset++);
 
         }
         // Bias conditioned to +/- 5.
         activation += (-1 * this.getWeight(offset));
-        output.push(c * (this.sigmoid(activation, this.CONSTResponse)) + m);
+        output.push(m * (this.sigmoid(activation, this.CONSTResponse)) + c);
 
         //Do next neuron in this layer
         activation = 0;
@@ -210,9 +247,9 @@ FeedForward.prototype.getOutput = function (xInputs) {
 
                 activation += xInputs[k] * this.getWeight(offset++);
             }
-            // Bias conditioned to +/- 5.
+            // Bias conditioned.
             activation += (-1 * this.getWeight(offset++));
-            output.push(c * (sigmoid(activation, CONSTResponse)) + m);
+            output.push(m * (this.sigmoid(activation, this.CONSTResponse)) + c);
 
             // Do next neuron in this layer.
             activation = 0;
@@ -253,13 +290,6 @@ FeedForward.prototype.getOutput = function (xInputs) {
 }
 
 
-function randomClamped() {
-
-    // Returns a random wordLength number, E.g., 10 bit = 0~1023.
-
-    return Math.floor(getRandom(0, 1) * Math.pow(2, this.wordLength));
-
-}
 
 FeedForward.prototype.sigmoid = function (activation, response) {
 

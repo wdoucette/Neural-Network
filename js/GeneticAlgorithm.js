@@ -9,10 +9,9 @@ function GeneticAlgorithm(chromosoneLength,wordLength) {
     this.wordLength =wordLength;
     this.mutationRate = .01;
     this.crossoverRate = 1;
-    var maxEpochs = 100;
     this.includeParents = true;
-
-
+    this.weightFactor = 1 / 100;
+    
     // Holds the population.
     this.pool = new Array();
     this.chromosoneLength = chromosoneLength;
@@ -46,16 +45,17 @@ GeneticAlgorithm.prototype.initPool = function (seed, poolSize) {
     this.pool = genePool;
 }
 
-GeneticAlgorithm.prototype.getTopChromosone = function () {
+GeneticAlgorithm.prototype.getTopChromosone = function (obj) {
 
     // calc fs
-    this.evaluatePool()
+    this.evaluatePool(obj)
     return this.pool[0];
 
 }
 
 GeneticAlgorithm.prototype.epoch = function (genePool) {
 
+    if (typeof genePool == 'undefined') genePool = this.pool.slice(0, 5);
     // Push latent genes.
     // genePool.push(latentGenome);
 
@@ -182,8 +182,13 @@ GeneticAlgorithm.prototype.epoch = function (genePool) {
 
     // Include parents - Parent pool survives WITHOUT evolving.
 
+    // TODO: hardcoded seedSize (5):
     if (this.includeParents) ngChromosones = ngChromosones.concat(genePool.slice(0, 5));
 
+    // TODO: ? Persist existing fitness scores. 
+    for (var i = 0; i < 5; i++) {
+        //ngChromosones[i].fs = genePool[i].fs;
+    }
     this.pool = ngChromosones;
 
 }
@@ -198,7 +203,7 @@ GeneticAlgorithm.prototype.getWeights = function () {
         // Convert (10-bit) number into +/- decimal.
 
         // TODO Decimal place adapts to word length. 
-        result.push(((value - (Math.pow(2, wordLength) * .5)) * .01));
+        result.push(((value - (Math.pow(2, wordLength) * .5)) * weightFactor));
 
         //return ((this.weights[index] - (Math.pow(2, wordLength) / 2))).toFixed(2) //this.weights[index];
 
@@ -235,27 +240,26 @@ GeneticAlgorithm.prototype.getBinaryString = function (index) {
 
 }
 
-GeneticAlgorithm.prototype.evaluatePool = function () {
+GeneticAlgorithm.prototype.evaluatePool = function (obj) {
 
     var pool = this.pool;
 
     // Each chromosone.
 
-    pool.forEach(function (pKey, value) {
-
-        // Reset fitness.
+    pool.forEach(function (pKey, value, obj) {
+     // Reset fitness.
         pool[pKey].fs = 0;
 
         // Each training set.
-        trainingSets.forEach(function (tsKey, value) {
+        trainingSets.forEach(function (tsKey, value, obj) {
 
             inputs = trainingSets[tsKey].inputs;
             targets = trainingSets[tsKey].outputs;
 
-            var results = __App.NeuralNetwork.update(inputs, pool[pKey]);
+            var results = obj.update(inputs, pool[pKey]);
 
             // Evaluate fitness and set new score.
-            results.forEach(function (index, value) {
+           results.forEach(function (index, value) {
 
                 var delta = Math.abs(targets[index] - results[index]);
 
@@ -266,9 +270,9 @@ GeneticAlgorithm.prototype.evaluatePool = function () {
 
             });
 
-        });
+        }, obj);
 
-    });
+    }, obj);
 
 
     // Order pool by lowest (best) fitness score.

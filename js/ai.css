@@ -1,4 +1,10 @@
-﻿.sets input
+﻿body 
+{
+    
+     
+    
+}
+.sets input
 {
     border: 1px solid black;
 }
@@ -58,8 +64,8 @@
 
 #log
 {
-    width: 299px;
-    margin-left: 0px;
+   /* margin-left: 0px;
+*/
 }
 
 #trainingSets input
@@ -69,14 +75,17 @@ width:125px;
 margin:5px; 
     
 }
-#trainingSets
-{    height: 138px;
-}
 
-#wr_Apper
+
+
+/*        */
+#wrapper
 {
-    
-    margin-left: 0px;
+ zoom: 80%;
+        
+width: 290px;
+border:4px groove;
+
 }
 #networkConfig
 {
@@ -118,7 +127,6 @@ margin:5px;
 {
     background-color: #EEEEEE;
     margin-top: 10px;
-    float:right;
     }
 
 
@@ -135,8 +143,7 @@ margin:5px;
     border: 2px groove white;
     height: 85px;
     width: 220px;
-    margin-right: 10px;
-
+   
 }
 
 #taNetImport
@@ -145,4 +152,20 @@ margin:5px;
 overflow:scroll;    
 width: 235px;
     
+}
+
+
+#trainingSets
+{ 
+    
+}
+
+#log
+{
+background-color: #EEEEEE;
+border: 1px solid black;
+height: 200px;
+overflow: scroll;    
+
+
 }

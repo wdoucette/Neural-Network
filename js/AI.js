@@ -1,259 +1,540 @@
+function AI(args) {
+
+    // TODO: Expose train methods.
+    // TODO: Register callback
+    var poolSize = 5;
+
+    if (typeof args == 'undefined') return new interfaceAI();
+    
+    else {
+
+        this.Network = {};
+
+        Trainer = function (args) {
+
+            // Generate net
+            this.NetworkLayers = new FeedForward(args[0], args[1], args[2], args[3], args[4]);
+            var seed = this.NetworkLayers.getWeights();
+            this.GA = new GeneticAlgorithm(seed.length, this.NetworkLayers.wordLength);
+            this.GA.initPool(seed, poolSize);
+
+            // accept input
+            this.AutoEvaluate = function (dataSets, callback) {
+
+                // TODO: fix this Global
+                trainingSets = dataSets;
+                this.GA.evaluatePool(this.NetworkLayers);
 
 
-var _App = function (UI) {
+                callback(this.NetworkLayers.update(inputs));
+
+            }
 
 
-    this.setUI(UI);
+            this.Evolve = function () {
+
+                this.GA.epoch();
+            }
+            // send result
+            // take fitness.
+            // repeat
+        }
+
+        this.Network = new Trainer(args);
+        return this.Network;
+        
+    }
+}
+
+
+    function interfaceAI() {
+
+    // This has to be called AFTER page load -not immediate.
+    Interface = function () {
+
+        //this.Lib = Lib;
+        // Object representing the UI for controller interface. 
+        //json interface.
+        // Implements
+        // Methods:
+        // log(msg, lb)
+        // status(msg, color)
+        // Properties:
+        // NeuralNetwork(arguments)
+        // parameters
+
+        var Obj = {
+
+            // Get/Set.
+            nInputs: function (value) {
+                var el = document.getElementById("tbnInputs");
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            nInputNeurons: function (value) {
+                el = document.getElementById("tbnInputNeurons");
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            nHidden: function (value) {
+                el = document.getElementById("tbnHiddenLayers");
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            nNeurons: function (value) {
+                el = document.getElementById("tbnNeuronsPerHiddenLayer");
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            nOutputs: function (value) {
+                el = document.getElementById("tbnOutputs");
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            chromosone: function (value) {
+                el = document.getElementById("tbChromosone");
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            response: function (value) {
+                el = document.getElementById("tbResponse");
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            weightFactor: function (value) {
+                el = document.getElementById("tbWeightFactor");
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            epoch: function (value) {
+                el = document.getElementById("tbEpoch");
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            maxEpochs: function (value) {
+                el = document.getElementById("tbMaxEpochs");
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            netName: function (value) {
+                el = document.getElementById('tbNetName');
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            setCount: function (value) {
+                el = document.getElementById('nSets');
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            nTrainingSets: function (value) {
+                el = document.getElementById('nSets');
+                if (typeof value != 'undefined') {
+                    el.value = value;
+                }
+                return el.value;
+            },
+            trainingSets: function (obj) {
+                return obj.Lib.parseTrainingSets();
+            },
+            importNetwork: function (value) {
+                Network.Lib.importNetwork(value);
+            },
+            initNetExport: function (print, save,obj) {
+                obj.Lib.initNetExport(print, save);
+            },
+
+            status: function (msg, color) {
+
+                el = document.getElementById('status');
+                el.style.backgroundColor = color;
+                el.innerHTML = msg;
+                return;
+            },
+
+            log: function (msg, lb,obj) {
+                obj.Lib.log(msg, lb);
+            },
+
+            validate: function () { }
+        }
+
+        return Obj;
+    };
+
+
+    // TODO: Rewrite.
+
+    this.evaluateChromosone = function (n, navToggle) {
+
+        var results;
+        var ele;
+        var match = "";
+
+        var GA = this.GA;
+        var Network = this.Network;
+
+
+        if (navToggle != undefined) {
+            navDisabled = (navDisabled) ? false : true;
+        }
+
+        iCurrentChromosone += n;
+
+        if (iCurrentChromosone > this.GA.pool.length - 1) iCurrentChromosone = 0;
+        if (iCurrentChromosone < 0) iCurrentChromosone = GA.pool.length - 1;
+
+
+        // TODO: Encapsulate through UI.
+
+        document.getElementById('networkResultTitle').innerHTML = "Chromosone #: " + iCurrentChromosone + "<br />Fitness: ";
+        document.getElementById('networkResultTitle').innerHTML += this.GA.pool[iCurrentChromosone].fs; //parseFloat(value).toFixed(2) + " ";
+
+
+        // Each training set.
+        trainingSets.forEach(function (tsKey, value) {
+
+            inputs = trainingSets[tsKey].inputs;
+            targets = trainingSets[tsKey].outputs;
+
+            results = Network.NetworkLayers.update(inputs, GA.pool[iCurrentChromosone]);
+
+            // TODO: encapsulate through UI
+
+            ele = 'setResult' + tsKey;
+            document.getElementById(ele).innerHTML = "";
+
+
+            results.forEach(function (index, value) {
+                var html = parseFloat(value).toFixed(this.sigFigures) + " ";
+
+                document.getElementById(ele).innerHTML += html + " ";
+                if (targets[index] == Math.round(value)) match += targets[index];
+            });
+
+            document.getElementById(ele).innerHTML += "<br />";
+
+        });
+
+
+
+        //nnToImg(document.getElementById('nnCanvas'));
+
+        if (match.length == targets.length * trainingSets.length) {
+
+            //TODO: hook this:
+            // Shdow stats.
+
+            // Print network json.
+            this.Interface.initNetExport(true, false, this.Network);
+
+            this.Interface.status("Completed.", "lightgreen");
+            this.Interface.log("Completed.",false,this.Network);
+
+            // Success
+            return true;
+        }
+
+        else return false
+    }
+
+
+    this.exportNetwork = function () {
+
+        var obj = {};
+
+        obj.network = this.Network.NetworkLayers.snapshot();
+        obj.chromosone = this.Network.GA.getTopChromosone(this.Network.NetworkLayers);
+        obj.fs = obj.chromosone.fs;
+        obj.version = this.Network.NeuralNetwork.version;
+        obj.epoch = this.Network.NetworkLayers.count;
+        obj.response = this.Network.NetworkLayers.CONSTResponse;
+        obj.weightFactor = this.Network.GA.weightFactor;
+
+        // obj...=...
+        return obj;
+    };
+
+
+    this.ticks = function (obj) {
+
+        var completed = false;
+
+        // Pause ticker.
+        clearInterval(this.ticksTimer);
+
+
+        // Do stuff...
+
+        this.GA.evaluatePool(this.Network.NetworkLayers);
+
+        // Evaluate completion status.
+        completed = this.evaluateChromosone(0);
+
+        status("Epoch: " + (this.Network.NetworkLayers.count + 1));
+
+        this.Network.NetworkLayers.count++;
+
+        if (this.Network.NetworkLayers.count < maxEpochs && !completed) {
+
+            // Resume.
+
+            // Evolve network.
+            this.GA.epoch(this.GA.pool.slice(0, 5));
+
+
+            this.ticksTimer = setInterval(function (obj) {
+
+                (function () {
+
+                    setTimeout(function () { obj.ticks(obj) }, 1);
+
+                }
+                        )(obj);
+
+            } (obj), 1);
+
+
+        }
+
+        // Else ticker remains suspended -wait for a UI event.
+        else {    
+        
+        // Print current network.
+            this.Interface.initNetExport(true, false, this);
+        }
+
+    }
+
+
+    this.resume = function () {
+
+        // Ensure UI hasen't changed network topology.
+        this.createNetwork(this.Network); 
+        
+        // Reload an existing chromosone.
+        if (typeof this.chromosone != 'undefined' && this.chromosone != "") {
+
+            // Restoring previous network.
+
+            // Load chromosone.
+            this.GA.pool[0] = this.chromosone.split(',');
+
+        }
+
+        this.ticks(this.Network);
+
+    }
+
+
+    this.createNetwork = function (obj) {
+
+        var nInputs;
+        var nOutputs;
+        var nHidden;
+        var nNeurons;
+
+        var epoch;
+
+        var seed;
+        var poolSize = 5;
+
+
+        // Parse UI parameters.
+
+        // TODO: UI.validate();
+        nInputs = this.Interface.nInputs();
+        nInputNeurons = this.Interface.nInputNeurons();
+        nHidden = this.Interface.nHidden();
+        nNeurons = this.Interface.nNeurons();
+        nOutputs = this.Interface.nOutputs();
+        this.chromosone = this.Interface.chromosone();
+        weightFactor = this.Interface.weightFactor();
+        response = this.Interface.response();
+        epoch = this.Interface.epoch();
+        maxEpochs = this.Interface.maxEpochs();
+        trainingSets = this.Interface.trainingSets(obj);
+
+
+        // Create a new Neural Network and Genetic Algorithm.
+        this.NetworkLayers = new FeedForward(nInputs, nInputNeurons, nHidden, nNeurons, nOutputs);
+        var seed = this.NetworkLayers.getWeights();
+        this.GA = new GeneticAlgorithm(seed.length, this.Network.NetworkLayers.wordLength, this.Network);
+
+        // Entry point.
+
+        // Load current UI.
+        //      this.registerUI(_UI.Interface());
+
+        this.GA.initPool(seed, poolSize);
+        this.Interface.status("Init.", "lightpink");
+
+        // TODO: Update link upon export event.
+
+        // Initalize UI outputs
+
+        //UI.log();
+        this.Interface.log(this.Network.NetworkLayers.neurons + " Neurons created.", false, this.Network);
+        this.Interface.log(this.Network.NetworkLayers.synapses + " synapses.", false, this.Network);
+        this.Interface.log("Network entropy: " + (this.Network.NetworkLayers.wordLength * this.Network.NetworkLayers.synapses).toExponential(),true, this.Network);
+
+    }
+
+        // Create UI Lib.
+        this.Lib = new InterfaceLibrary();
+
+        // Create Interface against UI.
+        this.Interface = Interface(this.UI);
+
+        // Register Interface.
+        this.Lib.initInterface(this.Interface);
+
+        // Initialize UI elements.
+        this.Lib.initUI();
+
+        // Instanciate Network Object and register Interface.
+        this.NeuralNetwork = new NeuralNetwork(this.Interface);
+
+
+        //Network = this; //.Network;
+        this.Network = this;
+        this.Lib.registerNetwork(this);
+        this.Lib.attachEvents(this);
+
+        //Network = this;
+        return this; // Network;
+    }
+
+
+NeuralNetwork = function (interface) {
+
+    //   this._UI = _UI;
+    //   this._UI.initUI();
+    this.Interface = interface;
+
+
+    this.Network;
+    this.GA;
+    this.chromosone;
 
     // Wires NeuralNetwork with learning methods and algorithm.
+    this.registerUI(this._UI);
 
     this.ticksTimer;
     this.version = "0.1";
     var sigFigures = 2;
 
+
+    // TODO: Rewrite eval:
     iCurrentChromosone = 0;
     this.navDisabled = false;
 
-    this.NeuralNetwork;
-    this.GA;
-    this.UI;
-    // Initialize export.
 
 
     this.pause = function () {
 
-        clearInterval(__App.ticksTimer);
+        clearInterval(this.ticksTimer);
 
         this.UI.status("Paused.");
     }
 
 
 
-    //    return this;
+    this.setWeightFactor = function (value) {
 
-}
-
-
-_App.prototype.setUI = function (UserInterface) {
-
-    // UserInterface is a JSON interface to UI view and events.
-    this.UI = UserInterface;
-
-}
-
-
-_App.prototype.ticks = function () {
-
-    var completed = false;
-
-    // Pause ticker.
-    clearInterval(this.ticksTimer);
-
-
-    // Do stuff...
-
-    this.GA.evaluatePool();
-
-    // Evaluate completion status.
-    completed = __App.evaluateChromosone(0);
-
-    status("Epoch: " + (this.NeuralNetwork.count + 1));
-
-    this.NeuralNetwork.count++;
-
-    if (this.NeuralNetwork.count < maxEpochs && !completed) {
-
-        // Resume.
-
-        // Evolve network.
-        this.GA.epoch(this.GA.pool.slice(0, 5));
-
-        this.ticksTimer = setInterval(function () {
-
-            __App.ticks();
-        }, 1);
-    }
-
-    // Else ticker remains suspended -wait for a UI event.
-}
-
-
-// Entry point.   
-_App.prototype.main = function (train) {
-
-    // Load current UI.
-    this.setUI(_UI.Interface());
-
-    var nInputs;
-    var nOutputs;
-    var nHidden;
-    var nNeurons;
-
-    var chromosone;
-    var epoch;
-
-    var seed;
-    var poolSize = 5;
-
-
-    // Parse UI parameters.
-
-    // TODO: UI.validate();
-    nInputs = this.UI.nInputs;
-    nInputNeurons = this.UI.nInputNeurons;
-    nHidden = this.UI.nHidden;
-    nNeurons = this.UI.nNeurons;
-    nOutputs = this.UI.nOutputs;
-
-    chromosone = this.UI.chromosone;
-    epoch = this.UI.epoch;
-
-    maxEpochs = this.UI.maxEpochs;
-    trainingSets = this.UI.trainingSets;
-
-
-    // Create a new Neural Network and Genetic Algorithm.
-    this.NeuralNetwork = new FeedForward(nInputs, nInputNeurons, nHidden, nNeurons, nOutputs);
-    this.NeuralNetwork.startTime = new Date();
-
-    var seed = this.NeuralNetwork.getWeights();
-    this.GA = new GeneticAlgorithm(seed.length, this.NeuralNetwork.wordLength);
-
-    if (chromosone != "") {
-
-        // Restoring previous network.
-
-        // Load chromosone.
-        this.GA.pool[0] = chromosone.split(',');
-
-        // Evaluate network.
-        this.GA.evaluatePool();
-        status("Epoch: " + epoch);
-        this.evaluateChromosone(0);
-        if (!train) return;
+        //this.GA.weightFactor = value;
+        this.NeuralNetwork.setWeightFactor(parseFloat(value));
 
     }
 
-    this.GA.initPool(seed, poolSize);
-    if(chromosone !="") this.GA.pool[0] = chromosone.split(',');
 
-    this.UI.status("Init.", "lightpink");
+    this.setResponse = function (value) {
 
-    // TODO: Update link upon export event.
-    // initNetExport(nnArgs);
+        //this.GA.weightFactor = value;
+        this.NeuralNetwork.setResponse(parseFloat(value));
 
-    // Initalize UI outputs
-
-    //UI.log();
-    this.UI.log(this.NeuralNetwork.neurons + " Neurons created.");
-    this.UI.log(this.NeuralNetwork.synapses + " synapses.");
-    this.UI.log("Network entropy: " + (this.NeuralNetwork.wordLength * this.NeuralNetwork.synapses).toExponential());
-
-    // Start ticker.
-    if (train) { this.ticks(); }
-
-
-}
-
-// TODO: Rewrite.
-
-_App.prototype.evaluateChromosone = function (n, navToggle) {
-
-    var results;
-    var ele;
-    var match = "";
-
-    if (navToggle != undefined) {
-        navDisabled = (navDisabled) ? false : true;
     }
 
-    iCurrentChromosone += n;
 
-    if (iCurrentChromosone > this.GA.pool.length - 1) iCurrentChromosone = 0;
-    if (iCurrentChromosone < 0) iCurrentChromosone = GA.pool.length - 1;
+    
 
 
-    // TODO: Encapsulate through UI.
+    // TODO: move this.
+    //FeedForward.prototype.end = function (pool) {
 
-    document.getElementById('networkResultTitle').innerHTML = "Chromosone #: " + iCurrentChromosone + "<br />Fitness: ";
-    document.getElementById('networkResultTitle').innerHTML += this.GA.pool[iCurrentChromosone].fs; //parseFloat(value).toFixed(2) + " ";
+    //    // Training criteria met.
+
+    //    this.endTime = new Date();
+
+    //    document.getElementById('status').style.backgroundColor = "Green";
+    //    _UI._UI.log("Completed.");
+
+    //    _UI.log("Total runtime: " + (this.endTime.getTime() - this.startTime.getTime()) + "ms");
+    //    _UI.log("Epochs: " + this.count);
+
+    //    outputs = _App.NeuralNetwork.update(inputs, pool[0]);
+
+    //    _UI.log("");
+    //    _UI.log("Best match:");
+
+    //    outputs.forEach(function (key, value) {
+    //        _UI.log("Output: " + value);
+    //    });
+
+    //    _UI.log("Genome length " + pool[0].length + ":");
+    //    _UI.log(__App.NeuralNetwork.getWeights());
+
+    //    inputs.forEach(function (key, value) {
+
+    //        _UI.log(value + " ", 1);
+    //    });
+
+    //    return true;
+    //}
 
 
-    // Each training set.
-    trainingSets.forEach(function (tsKey, value) {
-
-        inputs = trainingSets[tsKey].inputs;
-        targets = trainingSets[tsKey].outputs;
-
-        results = __App.NeuralNetwork.update(inputs, __App.GA.pool[iCurrentChromosone]);
-
-        // TODO: encapsulate through UI
-
-        ele = 'setResult' + tsKey;
-        document.getElementById(ele).innerHTML = "";
-
-
-        results.forEach(function (index, value) {
-            var html = parseFloat(value).toFixed(this.sigFigures) + " ";
-
-            document.getElementById(ele).innerHTML += html + " ";
-            if (targets[index] == Math.round(value)) match += targets[index];
-        });
-
-        document.getElementById(ele).innerHTML += "<br />";
-
-    });
-
-
-
-    //nnToImg(document.getElementById('nnCanvas'));
-
-    if (match.length == targets.length * trainingSets.length) {
-
-       //TODO: hook this:
-        // Show stats.
-
-        this.UI.status("Completed.", "lightgreen");
-        this.UI.log("Completed.");
-
-        // Success
-        return true;
-    }
-
-    else return false
 }
 
+NeuralNetwork.prototype.registerUI = function (InterfaceLibrary) {
 
-_App.prototype.exportNetwork = function () {
-
-    var obj = {};
-
-    obj.network = __App.NeuralNetwork.snapshot();
-    obj.chromosone = __App.GA.getTopChromosone();
-    obj.version = __App.version;
-    obj.epoch = __App.NeuralNetwork.count;
-    obj.fs = obj.chromosone.fs;
-
-    //obj...
-    return obj;
-};
-
-
-
-getRandom = function (min, max) {
-
-    return max - (Math.random() * (max - min));
+    // InterfaceLibrary is a JSON interface to UI view and events.
+    this.UI = InterfaceLibrary;
 
 }
 
 
 
-// Prototypes.
-Array.prototype.forEach = function (fn) {
+
+
+// Type Prototypes.
+Array.prototype.forEach = function (fn, obj) {
 
     // Pass key/value pairs to returning function.
     for (var i = 0; i < this.length; i++) {
-        fn(i, this[i]);
+        fn(i, this[i],obj);
     }
 };
 
@@ -277,68 +558,44 @@ Array.prototype.unique = function () {
 }
 
 
-// TODO: move this.
-//FeedForward.prototype.end = function (pool) {
-
-//    // Training criteria met.
-
-//    this.endTime = new Date();
-
-//    document.getElementById('status').style.backgroundColor = "Green";
-//    _UI._UI.log("Completed.");
-
-//    _UI.log("Total runtime: " + (this.endTime.getTime() - this.startTime.getTime()) + "ms");
-//    _UI.log("Epochs: " + this.count);
-
-//    outputs = _App.NeuralNetwork.update(inputs, pool[0]);
-
-//    _UI.log("");
-//    _UI.log("Best match:");
-
-//    outputs.forEach(function (key, value) {
-//        _UI.log("Output: " + value);
-//    });
-
-//    _UI.log("Genome length " + pool[0].length + ":");
-//    _UI.log(__App.NeuralNetwork.getWeights());
-
-//    inputs.forEach(function (key, value) {
-
-//        _UI.log(value + " ", 1);
-//    });
-
-//    return true;
-//}
 
 
 
 
-function status(msg) { document.getElementById('status').innerHTML = msg; }
 
-// Logging.
-if (1); //(console.log) log = function (msg) { console._UI.log(msg) };
-else {
-    function log(msg, lb, verb) {
-        //verb
-        // 9=Everything
-        // 5=Info
-        // 1=Errors only
-        //   if (verb == undefined) verb = 5;
-        //   if (!verbosity || verbosity < verb) return;
-        //   if (verb == verbError) msg = "<br/ >" + "ERROR: " + msg;
 
-        var log = document.getElementById("log");
 
-        //linebreak flag
-        if (!lb) msg += "<br />";
+    function status (msg) { document.getElementById('status').innerHTML = msg; }
 
-        //   msg += log.innerHTML;
+    // Logging.
+    if (1); //(console.log) log = function (msg) { console._UI.log(msg) };
+    else {
+       function log(msg, lb, verb) {
+            //verb
+            // 9=Everything
+            // 5=Info
+            // 1=Errors only
+            //   if (verb == undefined) verb = 5;
+            //   if (!verbosity || verbosity < verb) return;
+            //   if (verb == verbError) msg = "<br/ >" + "ERROR: " + msg;
 
-        log.innerHTML += msg;
+            var log = document.getElementById("log");
 
+            //linebreak flag
+            if (!lb) msg += "<br />";
+
+            //   msg += log.innerHTML;
+
+            log.innerHTML += msg;
+
+
+        }
 
     }
 
-}
 
+    getRandom = function (min, max) {
 
+        return max - (Math.random() * (max - min));
+
+    }

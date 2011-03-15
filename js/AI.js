@@ -13,35 +13,59 @@ function AI(args) {
         Trainer = function (args) {
 
             // Generate net
-            this.NetworkLayers = new FeedForward(args[0], args[1], args[2], args[3], args[4]);
-            var seed = this.NetworkLayers.getWeights();
-            this.GA = new GeneticAlgorithm(seed.length, this.NetworkLayers.wordLength);
-            this.GA.initPool(seed, poolSize);
+            var NetworkLayers = new FeedForward(args[0], args[1], args[2], args[3], args[4]);
+            var seed = NetworkLayers.getWeights();
+            var GA = new GeneticAlgorithm(seed.length, NetworkLayers.wordLength);
+            GA.initPool(seed, poolSize);
+            this.chromosoneIndex = 0;
 
-            // accept input
             this.AutoEvaluate = function (dataSets, callback) {
 
                 // TODO: fix this Global
                 trainingSets = dataSets;
-                this.GA.evaluatePool(this.NetworkLayers);
-
-
-                callback(this.NetworkLayers.update(inputs));
+                GA.evaluatePool(NetworkLayers);
+                callback(NetworkLayers.update(inputs));
 
             }
 
+            this.DynamicEvaluate = function (inputs) {
+
+                // TODO: fix this Global
+
+                var results = NetworkLayers.update(inputs, GA.pool[this.chrmosoneIndex]);
+                
+                return results;
+            }
+
+            this.setFitness = function (fs) {
+
+                GA.setChromosoneFS(fs, this.chromosoneIndex);
+
+            }
+
+            this.incChromosoneIndex = function () {
+
+                this.chromosoneIndex++;
+                if (this.chromosoneIndex == GA.pool.length) {
+
+                    this.chromosoneIndex = 0;
+                    GA.epoch();
+
+                }
+
+            }
 
             this.Evolve = function () {
 
-                this.GA.epoch();
+                GA.epoch();
             }
             // send result
             // take fitness.
             // repeat
         }
 
-        this.Network = new Trainer(args);
-        return this.Network;
+        var Network = new Trainer(args);
+        return Network;
         
     }
 }
@@ -559,12 +583,6 @@ Array.prototype.unique = function () {
 
 
 
-
-
-
-
-
-
     function status (msg) { document.getElementById('status').innerHTML = msg; }
 
     // Logging.
@@ -599,3 +617,38 @@ Array.prototype.unique = function () {
         return max - (Math.random() * (max - min));
 
     }
+
+
+    function slopeMC(value, inputMin,inputMax, toMin, toMax){
+
+        // Returns m and c of slope.
+        // Assumes input is offset 0, +/- (delta/2)
+        var y1Min = (typeof toMin =='undefined') ? -6: toMin;
+        var y1Max = (typeof toMax == 'undefined') ? 6 : toMax;
+
+        var y2Min = inputMin;
+        var y2Max = inputMax;
+
+        var dy1 = (y1Min - y1Max);
+        var dy2 = (y1Min - y1Max);
+
+        var m = ((y1Max - y1Min) * .5) / ((y2Max - y2Min) * .5);
+        var c = y1Min - m* y2Min;
+
+        return value * m + c;
+
+}
+
+
+// Sigmoid conditioning levels.
+var y1Min = -6;
+var y1Max = 6;
+
+
+// Max input levels.
+var y2Min = 0;
+var y2Max = 100;
+
+// Resulting slope and offset.
+var m = ((y1Max - y1Min) * .5) / ((y2Max - y2Min) * .5);
+var c = y1Min - y2Min;

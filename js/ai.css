@@ -164,8 +164,15 @@ width: 235px;
 {
 background-color: #EEEEEE;
 border: 1px solid black;
-height: 200px;
+height: 325px;
 overflow: scroll;    
 
 
 }
+
+#grid
+{
+    
+    overflow:hidden;
+    
+    }

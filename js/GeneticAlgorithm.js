@@ -43,15 +43,26 @@ GeneticAlgorithm.prototype.initPool = function (seed, poolSize) {
     }
 
     this.pool = genePool;
+
+    // Initially normalize poolsize.
+    this.epoch();
 }
 
 GeneticAlgorithm.prototype.getTopChromosone = function (obj) {
 
     // calc fs
-    this.evaluatePool(obj)
+    //this.evaluatePool(obj)
     return this.pool[0];
 
 }
+
+
+GeneticAlgorithm.prototype.setChromosoneFS = function (fs, index) {
+
+    this.pool[index].fs = fs;
+
+}
+
 
 GeneticAlgorithm.prototype.epoch = function (genePool) {
 
@@ -247,7 +258,7 @@ GeneticAlgorithm.prototype.evaluatePool = function (obj) {
     // Each chromosone.
 
     pool.forEach(function (pKey, value, obj) {
-     // Reset fitness.
+        // Reset fitness.
         pool[pKey].fs = 0;
 
         // Each training set.
@@ -259,7 +270,7 @@ GeneticAlgorithm.prototype.evaluatePool = function (obj) {
             var results = obj.update(inputs, pool[pKey]);
 
             // Evaluate fitness and set new score.
-           results.forEach(function (index, value) {
+            results.forEach(function (index, value) {
 
                 var delta = Math.abs(targets[index] - results[index]);
 
@@ -276,15 +287,19 @@ GeneticAlgorithm.prototype.evaluatePool = function (obj) {
 
 
     // Order pool by lowest (best) fitness score.
+    this.sortChromosones();
+
+}
+
+
+GeneticAlgorithm.prototype.sortChromosones = function (){
+
 
     pool.sort(function (a, b) {
         return (a.fs) - (b.fs);
     });
 
-    return;
-
 }
-
 
 
 GeneticAlgorithm.prototype.mutate = function(value) {

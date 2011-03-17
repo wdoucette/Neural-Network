@@ -164,7 +164,7 @@
 
                 var delta = 0;
                 //distance /theta
-                delta += Math.abs(targetVars[0] - Math.abs( targetVars[0] +newVars[0] )) ;
+                delta += Math.abs(targetVars[0] - ( targetVars[0] +newVars[0] )) ;
                 delta += Math.abs(targetVars[1] - newVars[1]) ;
                    
                     //LMS
@@ -181,19 +181,39 @@
 
 
             // if not done
-            if (fs > .2) {
+           // if (fs > .1) {
+
+              
+
+             //   trainingTimer = setInterval(manualEval, 100);
+            //}
+           // else {
+                // Found good chromosone.
+            //if (fs < 1) {
+                //myAI.chromosoneIndex = 0;
+                for (var i = 0; i < 1 / fs; i++) {
+
+
+                    // Get theta and distance
+                    var targetVars = process.getVars();
+
+                    // Apply state to net and get new process inputs.
+                    var results = myAI.DynamicEvaluate(targetVars);
+
+                    // Apply new process inputs.
+                    process.setInputs(results);
+
+                }
+            //}
 
                 // Walk through pool and automatically evolve.
                 myAI.incChromosoneIndex();  // myAI.nextChromosone(); //autoevolve
-                trainingTimer = setInterval(manualEval, 100);
-            }
-            else {
-                // Found good chromosone.
-                myAI.chromosoneIndex = 0;
+             
+              
                 trainingTimer = setInterval(manualEval, 100);
             
             
-            }
+            //}
         
         }
         function manualCallback(results) {
@@ -242,7 +262,7 @@
 
                 retval.push(slopeMC(target.distance, 0, 500));
 
-                retval.push(slopeMC(((vehicle.heading - target.heading)), -2*Math.PI, 2*Math.PI));
+                retval.push(slopeMC(((vehicle.heading - target.heading)), -2 * Math.PI, 2 * Math.PI));
 
                 document.getElementById('log').innerHTML += ('<br />distance var : ' + retval[0].toFixed(2) + '<br />Rotation var: ' + retval[1].toFixed(2)) + '<br />target theta: ' + target.heading;
 
@@ -265,45 +285,67 @@
 
             this.move = function () {
 
+                var gitter = getRandom(-15,15);
 
                 var left = slopeMC(leftTrack, 0, 1, -1, 1)
                 var right = slopeMC(rightTrack, 0, 1, -1, 1)
 
-                var speed = (left + right) / 2; // Math.sqrt(Math.pow(leftTrack, 2) + Math.pow(rightTrack, 2));
+                var speed = (left + right) /2; // Math.sqrt(Math.pow(leftTrack, 2) + Math.pow(rightTrack, 2));
 
                 var oldX = vehicle.x;
                 var oldY = vehicle.y;
 
                 // Radians of rotation.
-                var rotateBy = Math.atan(left / right);
+                var rotateBy = vehicle.heading + Math.atan(left / right);
 
                 // Calculate vector. 
-                var dX = Math.sin(left / right); // * rotateBy; // rotateBy; // Math.sin(rotateBy); //* speed;
-                var dY = Math.cos(left / right); //  left - right * rotateBy; //  Math.cos(rotateBy); //* speed;
+                var dX = Math.sin(rotateBy + left / right); // * rotateBy; // rotateBy; // Math.sin(rotateBy); //* speed;
+                var dY = Math.cos(rotateBy + left / right); //  left - right * rotateBy; //  Math.cos(rotateBy); //* speed;
+
+
+
+                vehicle.x -= dX *speed * gitter; // (dX + speed * Math.asin(vehicle.heading));
+                vehicle.y -= dY *speed * gitter; // (dY + speed * Math.acos(vehicle.heading));
+
+                vehicle.heading = this.compass(vehicle.x - oldX, vehicle.y - oldY); //+= rotateBy;
+                vehicle.heading += rotateBy;
+                // vehicle.x += speed * 10 * Math.sin(vehicle.heading);
+                // vehicle.y += speed * 10 * Math.cos(vehicle.heading);
                 document.getElementById('status').innerHTML = 'dX: ' + dX.toFixed(2) + ' dY: ' + dY.toFixed(2) + ' h: ' + (this.compass(dX, dY) / (2 * Math.PI) * 360).toFixed(1);
 
 
+                grid.xMax = 245;
+                grid.xMin = -245;
 
-                vehicle.x += dX; // (dX + speed * Math.asin(vehicle.heading));
-                vehicle.y += dY; // (dY + speed * Math.acos(vehicle.heading));
-
-                vehicle.heading = this.compass(vehicle.x - oldX, vehicle.y - oldY); //+= rotateBy;
-
-                vehicle.x += speed*10 * Math.sin(vehicle.heading);
-                vehicle.y += speed*10 * Math.cos(vehicle.heading);
+                grid.yMax = 245;
+                grid.yMin = -245;
 
 
-                if (vehicle.x > 250) vehicle.x = -250;
-                if (vehicle.x < -250) vehicle.x = 250;
+                //  if (grid.xMin > vehicle.x > grid.xMax) { vehicle.x = Math.random() * grid.xMax; vehicle.heading = Math.PI; } // -vehicle.heading };
+                //  if (vehicle.x < grid.xMin) { vehicle.x = grid.xMin; vehicle.heading += Math.PI };
 
-                if (vehicle.y > 250) vehicle.y = -250;
-                if (vehicle.y < -250) vehicle.y = 250;
+                //                if (vehicle.y > grid.yMax) { vehicle.y = grid.yMax; vehicle.heading += Math.PI / 2;}// -vehicle.heading };
+                //                if (vehicle.y < grid.yMin) { vehicle.y = grid.yMin; vehicle.heading = 2 * Math.PI - vehicle.heading };
+                //   vehicle.x = vehicle.x % 250;
+                //   vehicle.y = vehicle.y % 250;
 
 
-                grid.drawvehicleXY(vehicle.x, vehicle.y);
+                vehicle.heading = vehicle.heading % (2 * Math.PI);
+
+                grid.drawvehicleXY(vehicle.x, vehicle.y, vehicle.heading / 2 * Math.PI * 360);
+
+
+                target.x = -grid.width / 2 + (mouseX - grid.offsetLeft);
+                target.y = grid.height / 2 - (mouseY - grid.offsetTop);
+                // TODO: mouse position not initialized.
+                if (mouseX == 0) target.x = 0;
+                if (mouseY == 0) target.y = 0;
+
+
 
 
                 target.heading = this.compass(target.x - vehicle.x, target.y - vehicle.y); // vehicle.heading - target.heading;
+
                 target.distance = Math.sqrt(Math.pow(vehicle.x - target.x, 2) + Math.pow(vehicle.y - target.y, 2));
 
 
@@ -322,11 +364,12 @@
 
                 var grid = document.getElementById(elName);
                 var vehicle = document.getElementById('obj');
-
-                var width = grid.offsetWidth;
-                var height = grid.offsetHeight;
-                var offsetX = (width / 2);
-                var offsetY = (height / 2);
+                this.offsetLeft = grid.offsetLeft;
+                this.offsetTop = grid.offsetTop;
+                this.width = grid.offsetWidth;
+                this.height = grid.offsetHeight;
+                var offsetX = (this.width / 2);
+                var offsetY = (this.height / 2);
                 this.targets = [];
 
                 this.newTarget = function (elName) {
@@ -344,8 +387,13 @@
 
 
                     // Define a pseudo target
-                    this.x = Math.random() * width - offsetX;
-                    this.y = Math.random() * height - offsetY;
+                    this.x = -grid.width / 2 + (mouseX - grid.offsetLeft);
+                    this.y = grid.height / 2 - (mouseY - grid.offsetTop);
+
+                    // TODO: mouse position not initialized.
+                    if (mouseX = 0) this.x = 0;
+                    if (mouseY = 0) this.x = 0;
+
 
                     drawTargetXY(this.x, this.y);
 
@@ -353,11 +401,14 @@
                 }
 
 
-                this.drawvehicleXY = function (x1, y1) {
+                this.drawvehicleXY = function (x1, y1, rotation) {
 
                     // Polar coordinates.
                     vehicle.style.left = x1 + offsetX + 'px';
                     vehicle.style.top = -y1 + offsetY + 'px';
+
+                    // TODO: rotation is not necessarily in sync with heading.
+                    // document.getElementById('img').style.webkitTransform=  'rotate('+rotation+'deg)';//vehicle.style.rotation = rotation +'deg';
                     //el.innerHTML = '(' + (x).toFixed(2) + ',' + (y).toFixed(2) + ')';
 
                 }
@@ -381,9 +432,11 @@
         var trainingTimer;
         window.onload = function () {
 
+
+    
             // Build new network.
             // TODO: Dynamic defaults based on process vars (# inputs/outputs)
-            var args = [2, 4, 0, 0, 2];
+            var args = [2, 4, 1, 4, 2];
             // o o o o
             // h h h h
             // n n n n 
@@ -401,8 +454,8 @@
         }        
     </script>
     <div id='grid' style="position:absolute;top:0px;left:400px;border:1px solid black; width:500px; height:500px;">
-<div id="obj" style="position:relative">*</div>
-<div id="target" style="position: relative">X</div>
+<div id="obj" style="position:relative; "><img id="img" src="img/bee3.png" /></div>
+<div id="target" style="position: relative;">X</div>
 </div>
 </body>
 </html>

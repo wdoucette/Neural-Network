@@ -111,9 +111,11 @@ InterfaceLibrary.prototype.initInterface = function(obj){
 
 InterfaceLibrary.prototype.registerNetwork = function (obj) {
 
-   this.Network = obj;
 
-}
+   this.Network = obj;
+
+
+}
 
 InterfaceLibrary.prototype.attachEvents = function (obj) {
 
@@ -773,6 +775,7 @@ InterfaceLibrary.prototype.addSet = function (trainingSet) {
     }
 
 
+
     var parent = document.getElementById("trainingSets");
     var div;
     var inputs;
@@ -810,4 +813,34 @@ InterfaceLibrary.prototype.addSet = function (trainingSet) {
     //this.setCount(this.sets);
 
 }
+
+
+var mouseX = 0;
+var mouseY = 0;
+
+// If it is not IE, we assume that the browser is NS.
+var IE = document.all?true:false
+
+if (!IE) document.captureEvents(Event.MOUSEMOVE)
+
+// Set-up to use getMouseXY function onMouseMove
+document.onmousemove = getMouseXY;
+
+// Main function to retrieve mouse x-y pos.s
+
+function getMouseXY(e) {
+  if (IE) { // grab the x-y pos.s if browser is IE
+    mouseX = event.clientX + document.body.scrollLeft
+    mouseY = event.clientY + document.body.scrollTop
+  } else {  // grab the x-y pos.s if browser is NS
+    mouseX = e.pageX
+    mouseY = e.pageY
+  }
+  return true;
+}
+
+
+
+
+
 

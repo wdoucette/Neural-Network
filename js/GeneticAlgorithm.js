@@ -66,7 +66,7 @@ GeneticAlgorithm.prototype.setChromosoneFS = function (fs, index) {
 
 GeneticAlgorithm.prototype.epoch = function (genePool) {
 
-    if (typeof genePool == 'undefined') genePool = this.pool.slice(0, 5);
+    if (typeof genePool == 'undefined') genePool = this.pool.slice(0, poolSize);
     // Push latent genes.
     // genePool.push(latentGenome);
 

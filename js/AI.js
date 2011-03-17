@@ -2,7 +2,7 @@ function AI(args) {
 
     // TODO: Expose train methods.
     // TODO: Register callback
-    var poolSize = 5;
+    poolSize = 2;
 
     if (typeof args == 'undefined') return new interfaceAI();
     
@@ -327,7 +327,7 @@ function AI(args) {
             // Resume.
 
             // Evolve network.
-            this.GA.epoch(this.GA.pool.slice(0, 5));
+            this.GA.epoch(this.GA.pool.slice(0, poolSize));
 
 
             this.ticksTimer = setInterval(function (obj) {
